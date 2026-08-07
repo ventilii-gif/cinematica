@@ -275,15 +275,50 @@ svg#svgCad{height:430px;width:auto;max-width:100%;margin:0 auto}
 .gtable th{background:var(--surface2);color:var(--text);font-weight:600}
 .gtable td{color:var(--muted);font-variant-numeric:tabular-nums}
 @media print{.sim-graphs,.playbar,.sim-mode{display:none!important}}
+
+/* ===== Pulsante tema ===== */
+.header-actions{display:flex;align-items:center;gap:.5rem}
+.btn-theme{background:var(--surface2);border:1px solid var(--border);color:var(--primary-d);
+  border-radius:8px;padding:.35rem .55rem;font-size:1.05em;line-height:1;cursor:pointer;
+  min-height:36px;transition:background .15s,border-color .15s}
+.btn-theme:hover{background:var(--primary-l);border-color:var(--primary)}
+
+/* ===== Tema notte (versione scura) ===== */
+:root{--vPos:#455a64}
+:root[data-theme="dark"]{
+  --bg:#0f141f;--surface:#161d2a;--surface2:#1e2735;
+  --primary:#5b9dd9;--primary-d:#8bbdec;--primary-l:rgba(91,157,217,.15);
+  --text:#e6eaf2;--muted:#9aa4b8;--border:#2a3446;
+  --vT:#5b9dd9;--vP:#ef5350;--vN:#66bb6a;--vF:#ffb74d;--vFa:#ba68c8;--vFe:#26c6da;--vM:#ef5350;
+  --vPos:#9fb0c8;
+}
+:root[data-theme="dark"] svg.sim,
+:root[data-theme="dark"] svg.graph{background:#111825}
+:root[data-theme="dark"] .quiz-bar-wrap{background:#2a3446}
+:root[data-theme="dark"] .tip{background:rgba(102,187,106,.13);border-left-color:#66bb6a;color:#c3e6c7}
+:root[data-theme="dark"] .warn{background:rgba(255,183,77,.12);border-left-color:#ffb74d;color:#efd9ab}
+:root[data-theme="dark"] .ex-hint{background:rgba(255,183,77,.09);border-left-color:#ffb74d;color:#e8d3a4}
+:root[data-theme="dark"] .ex-hint .h-lab{color:#ffc879}
+:root[data-theme="dark"] .quiz-btn.correct{background:rgba(102,187,106,.24)!important;border-color:#66bb6a!important;color:#c8e6c9}
+:root[data-theme="dark"] .quiz-btn.wrong{background:rgba(239,83,80,.22)!important;border-color:#ef5350!important;color:#ffcdd2}
+:root[data-theme="dark"] .quiz-exp.ok{background:rgba(102,187,106,.14);border-left-color:#66bb6a;color:#c8e6c9}
+:root[data-theme="dark"] .quiz-exp.no{background:rgba(239,83,80,.14);border-left-color:#ef5350;color:#ffcdd2}
+:root[data-theme="dark"] .esercizio .risultato{background:rgba(91,157,217,.14)}
+:root[data-theme="dark"] .home-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.45)}
+:root[data-theme="dark"] .card{box-shadow:0 1px 2px rgba(0,0,0,.25)}
 </style>
 </head>
 <body>
+<script>try{var _t=localStorage.getItem('cinematica-theme');if(!_t)_t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 <header>
   <div class="header-brand">
     <h1>Il moto dei corpi</h1>
     <p class="header-sub">Cinematica interattiva — MRU, MRUA, caduta libera e moto parabolico</p>
   </div>
-  <button class="btn-print" onclick="window.print()">Stampa teoria</button>
+  <div class="header-actions">
+    <button class="btn-theme" id="themeBtn" aria-label="Cambia tema" title="Passa al tema scuro">🌙</button>
+    <button class="btn-print" onclick="window.print()">Stampa teoria</button>
+  </div>
 </header>
 <nav class="main" id="mainNav">
   <button data-tab="intro" class="active">Introduzione</button>
@@ -392,7 +427,7 @@ svg#svgCad{height:430px;width:auto;max-width:100%;margin:0 auto}
         <svg class="sim" id="svgMru" viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet"></svg>
         <div class="legend">
           <span style="color:var(--vT)"><i style="background:var(--vT)"></i>Velocità v</span>
-          <span style="color:#455a64"><i style="background:#455a64"></i>Posizione s</span>
+          <span style="color:var(--vPos)"><i style="background:var(--vPos)"></i>Posizione s</span>
         </div>
         <div class="sim-graphs">
           <div class="graph-box"><p class="g-cap">Spazio – tempo (s–t)</p><svg class="graph" id="gMruS" viewBox="0 0 220 150"></svg></div>
@@ -676,7 +711,14 @@ verticale  → caduta libera:  a = g verso il basso</div>
 /* ==================== COSTANTI ==================== */
 const G = 9.81;
 const SPEED = 1;                 // 1 = tempo reale
-const COL = {v:'#1565c0', a:'#f57c00', pos:'#455a64', vx:'#2e7d32', vy:'#e53935', vtot:'#1565c0', traj:'#7b1fa2', ground:'#5b6470'};
+/* Palette dati (vettori/curve) e "cromatura" (griglie/assi/testi/oggetti), per tema chiaro e scuro */
+const COL_LIGHT={v:'#1565c0', a:'#f57c00', pos:'#455a64', vx:'#2e7d32', vy:'#e53935', vtot:'#1565c0', traj:'#7b1fa2', ground:'#5b6470'};
+const COL_DARK ={v:'#5b9dd9', a:'#ffb74d', pos:'#9fb0c8', vx:'#66bb6a', vy:'#ef5350', vtot:'#5b9dd9', traj:'#ba68c8', ground:'#8892a6'};
+const INK_LIGHT={grid:'#9aa3b2', grid2:'#c2c9d6', axis:'#c7cede', text:'#6b7280', obj:'#dfe8f7', win:'#bcd0f0', wheel:'#37474f', dashMax:'#c9b8e0'};
+const INK_DARK ={grid:'#4c5871', grid2:'#333e52', axis:'#39445c', text:'#9aa4b8', obj:'#22314d', win:'#2b3d5c', wheel:'#aeb9cc', dashMax:'#6d5a8a'};
+let COL=COL_LIGHT, INK=INK_LIGHT;
+function themeIsDark(){ return document.documentElement.getAttribute('data-theme')==='dark'; }
+function refreshThemeVars(){ const d=themeIsDark(); COL=d?COL_DARK:COL_LIGHT; INK=d?INK_DARK:INK_LIGHT; }
 
 /* ==================== UTILITY ==================== */
 const val = id => { const e=document.getElementById(id); return e?+e.value:0; };
@@ -731,16 +773,16 @@ function plot(id,o){
   const PY=y=>mT+ih-((y-ymin)/(ymax-ymin))*ih;
   const yz=Math.max(ymin,Math.min(ymax,0));
   let s='';
-  s+=`<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+ih}" stroke="#9aa3b2" stroke-width="1.2"/>`;
-  s+=`<line x1="${mL}" y1="${PY(yz).toFixed(1)}" x2="${mL+iw}" y2="${PY(yz).toFixed(1)}" stroke="#9aa3b2" stroke-width="1.2"/>`;
+  s+=`<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+ih}" stroke="${INK.grid}" stroke-width="1.2"/>`;
+  s+=`<line x1="${mL}" y1="${PY(yz).toFixed(1)}" x2="${mL+iw}" y2="${PY(yz).toFixed(1)}" stroke="${INK.grid}" stroke-width="1.2"/>`;
   niceTicks(ymin,ymax,4).forEach(v=>{ const yy=PY(v);
-    s+=`<line x1="${mL-3}" y1="${yy.toFixed(1)}" x2="${mL}" y2="${yy.toFixed(1)}" stroke="#9aa3b2" stroke-width="1"/>`;
-    s+=`<text x="${mL-5}" y="${(yy+3).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="end">${fmtTick(v)}</text>`; });
+    s+=`<line x1="${mL-3}" y1="${yy.toFixed(1)}" x2="${mL}" y2="${yy.toFixed(1)}" stroke="${INK.grid}" stroke-width="1"/>`;
+    s+=`<text x="${mL-5}" y="${(yy+3).toFixed(1)}" font-size="9" fill="${INK.text}" text-anchor="end">${fmtTick(v)}</text>`; });
   niceTicks(0,xmax,4).forEach(v=>{ if(v<=1e-9) return; const xx=PX(v);
-    s+=`<line x1="${xx.toFixed(1)}" y1="${(mT+ih).toFixed(1)}" x2="${xx.toFixed(1)}" y2="${(mT+ih+3).toFixed(1)}" stroke="#9aa3b2" stroke-width="1"/>`;
-    s+=`<text x="${xx.toFixed(1)}" y="${(mT+ih+13).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="middle">${fmtTick(v)}</text>`; });
-  s+=`<text x="${mL+iw}" y="${(mT+ih+22).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="end">${o.xlabel||'t (s)'}</text>`;
-  if(o.ylabel) s+=`<text x="${mL-2}" y="${mT-3}" font-size="9" fill="#6b7280" text-anchor="start">${o.ylabel}</text>`;
+    s+=`<line x1="${xx.toFixed(1)}" y1="${(mT+ih).toFixed(1)}" x2="${xx.toFixed(1)}" y2="${(mT+ih+3).toFixed(1)}" stroke="${INK.grid}" stroke-width="1"/>`;
+    s+=`<text x="${xx.toFixed(1)}" y="${(mT+ih+13).toFixed(1)}" font-size="9" fill="${INK.text}" text-anchor="middle">${fmtTick(v)}</text>`; });
+  s+=`<text x="${mL+iw}" y="${(mT+ih+22).toFixed(1)}" font-size="9" fill="${INK.text}" text-anchor="end">${o.xlabel||'t (s)'}</text>`;
+  if(o.ylabel) s+=`<text x="${mL-2}" y="${mT-3}" font-size="9" fill="${INK.text}" text-anchor="start">${o.ylabel}</text>`;
   (o.curves||[]).forEach(c=>{ if(!c.pts||c.pts.length<2) return;
     const d=c.pts.map((p,i)=>`${i?'L':'M'}${PX(p[0]).toFixed(1)},${PY(p[1]).toFixed(1)}`).join(' ');
     s+=`<path d="${d}" fill="none" stroke="${c.color}" stroke-width="${c.w||2}" ${c.dash?`stroke-dasharray="${c.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`; });
@@ -827,16 +869,16 @@ function drawTrack(svgId,s,v,lo,hi,opt){
   const roadY=104, bw=30, bh=15, by=roadY-4-bh, px=PX(s);
   let g='';
   g+=`<line x1="16" y1="${roadY}" x2="384" y2="${roadY}" stroke="${COL.ground}" stroke-width="2"/>`;
-  for(let x=20;x<384;x+=14) g+=`<line x1="${x}" y1="${roadY}" x2="${x-6}" y2="${roadY+7}" stroke="#c2c9d6" stroke-width="1"/>`;
+  for(let x=20;x<384;x+=14) g+=`<line x1="${x}" y1="${roadY}" x2="${x-6}" y2="${roadY+7}" stroke="${INK.grid2}" stroke-width="1"/>`;
   niceTicks(lo,hi,5).forEach(sv=>{ const xx=PX(sv); if(xx<16||xx>384) return;
-    g+=`<line x1="${xx.toFixed(1)}" y1="${roadY}" x2="${xx.toFixed(1)}" y2="${roadY-5}" stroke="#9aa3b2" stroke-width="1"/>`;
-    g+=`<text x="${xx.toFixed(1)}" y="${roadY+18}" font-size="9" fill="#6b7280" text-anchor="middle">${fmtTick(sv)}</text>`; });
-  g+=`<text x="380" y="14" font-size="10" fill="#6b7280" text-anchor="end">s = ${nf(s,1)} m</text>`;
+    g+=`<line x1="${xx.toFixed(1)}" y1="${roadY}" x2="${xx.toFixed(1)}" y2="${roadY-5}" stroke="${INK.grid}" stroke-width="1"/>`;
+    g+=`<text x="${xx.toFixed(1)}" y="${roadY+18}" font-size="9" fill="${INK.text}" text-anchor="middle">${fmtTick(sv)}</text>`; });
+  g+=`<text x="380" y="14" font-size="10" fill="${INK.text}" text-anchor="end">s = ${nf(s,1)} m</text>`;
   // veicolo
-  g+=`<rect x="${(px-bw/2).toFixed(1)}" y="${by}" width="${bw}" height="${bh}" rx="4" fill="#dfe8f7" stroke="${COL.v}" stroke-width="1.6"/>`;
-  g+=`<rect x="${(px-bw/2+5).toFixed(1)}" y="${by+3}" width="8" height="6" rx="1.5" fill="#bcd0f0"/>`;
-  g+=`<circle cx="${(px-bw/2+7).toFixed(1)}" cy="${roadY-3}" r="3.8" fill="#37474f"/>`;
-  g+=`<circle cx="${(px+bw/2-7).toFixed(1)}" cy="${roadY-3}" r="3.8" fill="#37474f"/>`;
+  g+=`<rect x="${(px-bw/2).toFixed(1)}" y="${by}" width="${bw}" height="${bh}" rx="4" fill="${INK.obj}" stroke="${COL.v}" stroke-width="1.6"/>`;
+  g+=`<rect x="${(px-bw/2+5).toFixed(1)}" y="${by+3}" width="8" height="6" rx="1.5" fill="${INK.win}"/>`;
+  g+=`<circle cx="${(px-bw/2+7).toFixed(1)}" cy="${roadY-3}" r="3.8" fill="${INK.wheel}"/>`;
+  g+=`<circle cx="${(px+bw/2-7).toFixed(1)}" cy="${roadY-3}" r="3.8" fill="${INK.wheel}"/>`;
   // frecce
   const lv=Math.min(46,Math.abs(v)*4.0);
   if(lv>1) g+=arrow(px,by-10,px+Math.sign(v)*lv,by-10,COL.v,'v');
@@ -894,20 +936,20 @@ function drawFall(svgId,y,v,h0,hmax){
   const PY=Y=>yG-(Y/ymax)*(yG-top);
   let g='';
   g+=`<line x1="18" y1="${yG}" x2="196" y2="${yG}" stroke="${COL.ground}" stroke-width="2"/>`;
-  for(let x=22;x<196;x+=13) g+=`<line x1="${x}" y1="${yG}" x2="${x-7}" y2="${yG+8}" stroke="#c2c9d6" stroke-width="1"/>`;
-  g+=`<line x1="48" y1="${top}" x2="48" y2="${yG}" stroke="#c7cede" stroke-width="1"/>`;
+  for(let x=22;x<196;x+=13) g+=`<line x1="${x}" y1="${yG}" x2="${x-7}" y2="${yG+8}" stroke="${INK.grid2}" stroke-width="1"/>`;
+  g+=`<line x1="48" y1="${top}" x2="48" y2="${yG}" stroke="${INK.axis}" stroke-width="1"/>`;
   niceTicks(0,ymax,5).forEach(Y=>{ const yy=PY(Y);
-    g+=`<line x1="44" y1="${yy.toFixed(1)}" x2="48" y2="${yy.toFixed(1)}" stroke="#9aa3b2" stroke-width="1"/>`;
-    g+=`<text x="42" y="${(yy+3).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="end">${fmtTick(Y)}</text>`; });
-  g+=`<text x="18" y="${top-8}" font-size="9" fill="#6b7280">y (m)</text>`;
+    g+=`<line x1="44" y1="${yy.toFixed(1)}" x2="48" y2="${yy.toFixed(1)}" stroke="${INK.grid}" stroke-width="1"/>`;
+    g+=`<text x="42" y="${(yy+3).toFixed(1)}" font-size="9" fill="${INK.text}" text-anchor="end">${fmtTick(Y)}</text>`; });
+  g+=`<text x="18" y="${top-8}" font-size="9" fill="${INK.text}">y (m)</text>`;
   if(h0>0.01){ const yy=PY(h0);
-    g+=`<line x1="60" y1="${yy.toFixed(1)}" x2="150" y2="${yy.toFixed(1)}" stroke="#9aa3b2" stroke-width="1" stroke-dasharray="4 3"/>`;
-    g+=`<text x="153" y="${(yy+3).toFixed(1)}" font-size="9" fill="#6b7280">h₀</text>`; }
+    g+=`<line x1="60" y1="${yy.toFixed(1)}" x2="150" y2="${yy.toFixed(1)}" stroke="${INK.grid}" stroke-width="1" stroke-dasharray="4 3"/>`;
+    g+=`<text x="153" y="${(yy+3).toFixed(1)}" font-size="9" fill="${INK.text}">h₀</text>`; }
   if(hmax>h0+0.05){ const yy=PY(hmax);
-    g+=`<line x1="60" y1="${yy.toFixed(1)}" x2="150" y2="${yy.toFixed(1)}" stroke="#c9b8e0" stroke-width="1" stroke-dasharray="2 3"/>`;
-    g+=`<text x="153" y="${(yy+3).toFixed(1)}" font-size="9" fill="#7b1fa2">max</text>`; }
+    g+=`<line x1="60" y1="${yy.toFixed(1)}" x2="150" y2="${yy.toFixed(1)}" stroke="${INK.dashMax}" stroke-width="1" stroke-dasharray="2 3"/>`;
+    g+=`<text x="153" y="${(yy+3).toFixed(1)}" font-size="9" fill="${COL.traj}">max</text>`; }
   const py=PY(Math.max(0,y));
-  g+=`<circle cx="${cx}" cy="${py.toFixed(1)}" r="9" fill="#dfe8f7" stroke="${COL.v}" stroke-width="2"/>`;
+  g+=`<circle cx="${cx}" cy="${py.toFixed(1)}" r="9" fill="${INK.obj}" stroke="${COL.v}" stroke-width="2"/>`;
   const lv=Math.min(58,Math.abs(v)*2.4);
   if(lv>1) g+=arrow(cx,py,cx,py-Math.sign(v)*lv,COL.vy,'v');
   g+=arrow(184,32,184,58,COL.a,'g');
@@ -956,16 +998,16 @@ function parRender(t){
   const xmaxP=Math.max(p.R,1)*1.08, ymaxP=Math.max(p.H,1)*1.14;
   const PX=X=>mL+X/xmaxP*(W-mL-mR), PY=Y=>Hh-mB-Y/ymaxP*(Hh-mT-mB);
   let g='';
-  g+=`<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${(Hh-mB).toFixed(1)}" stroke="#c7cede" stroke-width="1"/>`;
+  g+=`<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${(Hh-mB).toFixed(1)}" stroke="${INK.axis}" stroke-width="1"/>`;
   g+=`<line x1="${mL}" y1="${PY(0).toFixed(1)}" x2="${W-mR}" y2="${PY(0).toFixed(1)}" stroke="${COL.ground}" stroke-width="2"/>`;
-  for(let xx=mL+5;xx<W-mR;xx+=14) g+=`<line x1="${xx}" y1="${PY(0).toFixed(1)}" x2="${xx-6}" y2="${(PY(0)+7).toFixed(1)}" stroke="#c2c9d6" stroke-width="1"/>`;
+  for(let xx=mL+5;xx<W-mR;xx+=14) g+=`<line x1="${xx}" y1="${PY(0).toFixed(1)}" x2="${xx-6}" y2="${(PY(0)+7).toFixed(1)}" stroke="${INK.grid2}" stroke-width="1"/>`;
   niceTicks(0,xmaxP,5).forEach(X=>{ if(X<=1e-9)return; const xx=PX(X);
-    g+=`<text x="${xx.toFixed(1)}" y="${(PY(0)+18).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="middle">${fmtTick(X)}</text>`; });
-  g+=`<text x="${W-mR}" y="${(PY(0)+18).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="end">x (m)</text>`;
+    g+=`<text x="${xx.toFixed(1)}" y="${(PY(0)+18).toFixed(1)}" font-size="9" fill="${INK.text}" text-anchor="middle">${fmtTick(X)}</text>`; });
+  g+=`<text x="${W-mR}" y="${(PY(0)+18).toFixed(1)}" font-size="9" fill="${INK.text}" text-anchor="end">x (m)</text>`;
   niceTicks(0,ymaxP,4).forEach(Y=>{ if(Y<=1e-9)return; const yy=PY(Y);
-    g+=`<line x1="${mL-3}" y1="${yy.toFixed(1)}" x2="${mL}" y2="${yy.toFixed(1)}" stroke="#9aa3b2" stroke-width="1"/>`;
-    g+=`<text x="${mL-5}" y="${(yy+3).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="end">${fmtTick(Y)}</text>`; });
-  g+=`<text x="${mL-2}" y="${(mT-3).toFixed(1)}" font-size="9" fill="#6b7280">y (m)</text>`;
+    g+=`<line x1="${mL-3}" y1="${yy.toFixed(1)}" x2="${mL}" y2="${yy.toFixed(1)}" stroke="${INK.grid}" stroke-width="1"/>`;
+    g+=`<text x="${mL-5}" y="${(yy+3).toFixed(1)}" font-size="9" fill="${INK.text}" text-anchor="end">${fmtTick(Y)}</text>`; });
+  g+=`<text x="${mL-2}" y="${(mT-3).toFixed(1)}" font-size="9" fill="${INK.text}">y (m)</text>`;
   let d='';
   for(let i=0;i<=N;i++){ const tt=i/N*T, xx=p.v0x*tt; let yy=p.h0+p.v0y*tt-0.5*G*tt*tt; if(yy<0)yy=0;
     d+=`${i?'L':'M'}${PX(xx).toFixed(1)},${PY(yy).toFixed(1)} `; }
@@ -975,7 +1017,7 @@ function parRender(t){
   if(Math.abs(vx)>0.1) g+=arrow(px,py,px+vx*sc,py,COL.vx,'vₓ');
   if(Math.abs(vy)>0.1) g+=arrow(px,py,px,py-vy*sc,COL.vy,'vᵧ');
   if(Math.hypot(vx,vy)>0.1) g+=arrow(px,py,px+vx*sc,py-vy*sc,COL.vtot,'');
-  g+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="6" fill="#dfe8f7" stroke="${COL.vtot}" stroke-width="2"/>`;
+  g+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="6" fill="${INK.obj}" stroke="${COL.vtot}" stroke-width="2"/>`;
   document.getElementById('svgPar').innerHTML=g;
   setTxt('parTr',nf(t,1)); setTxt('parRr',nf(p.R,1)); setTxt('parHr',nf(p.H,1)); setTxt('parTv',nf(T,2));
   setTxt('parVx',nf(p.v0x,1)); setTxt('parVy',nf(p.v0y,1));
@@ -1610,7 +1652,18 @@ const _hdr=document.querySelector('header'), _nav=document.querySelector('nav.ma
 function _updateNavTop(){ _nav.style.top=_hdr.offsetHeight+'px'; }
 new ResizeObserver(_updateNavTop).observe(_hdr); _updateNavTop();
 
-simMru.draw(); simMrua.draw(); simCad.draw(); simPar.draw();
+/* ----- Tema chiaro / scuro (versione notte) ----- */
+function paintTheme(){
+  refreshThemeVars();
+  const dark=themeIsDark();
+  const btn=document.getElementById('themeBtn');
+  if(btn){ btn.textContent=dark?'☀️':'🌙'; btn.title=dark?'Passa al tema chiaro':'Passa al tema scuro'; }
+  const mt=document.querySelector('meta[name="theme-color"]'); if(mt) mt.setAttribute('content', dark?'#0f141f':'#ffffff');
+  simMru.draw(); simMrua.draw(); simCad.draw(); simPar.draw();
+}
+function setTheme(t){ document.documentElement.setAttribute('data-theme',t); try{localStorage.setItem('cinematica-theme',t);}catch(e){} paintTheme(); }
+document.getElementById('themeBtn').addEventListener('click',()=>setTheme(themeIsDark()?'light':'dark'));
+paintTheme();
 </script>
 </body>
 </html>
