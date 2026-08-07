@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Cinematica · Fisica</title>
+<style>
+:root{
+  --bg:#f7f8fa;--surface:#fff;--surface2:#f9fafc;
+  --primary:#1565c0;--primary-d:#0d47a1;--primary-l:rgba(21,101,192,.08);
+  --text:#1a1a2e;--muted:#6b7280;--border:#e0e4ed;
+  --radius:12px;
+  --vT:#1565c0;--vP:#e53935;--vN:#2e7d32;--vF:#f57c00;--vFa:#7b1fa2;--vFe:#00897b;--vM:#c62828;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  font-size:clamp(15px,2.3vw,16.5px);line-height:1.6}
+
+/* ===== Header ===== */
+header{background:var(--surface);border-bottom:1px solid var(--border);
+  padding:.75rem 1rem;position:sticky;top:0;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.header-brand{display:flex;flex-direction:column;gap:.05rem}
+header h1{font-size:clamp(1.15rem,3.8vw,1.45rem);color:var(--text);
+  font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.header-sub{font-size:.75em;color:var(--muted);font-weight:400;line-height:1.3}
+.btn-print{background:var(--surface2);border:1px solid var(--border);
+  color:var(--primary-d);border-radius:8px;padding:.4rem .8rem;font-size:.82em;
+  cursor:pointer;font-family:inherit;font-weight:600;transition:background .15s,border-color .15s;white-space:nowrap}
+.btn-print:hover{background:var(--primary-l);border-color:var(--primary)}
+
+/* ===== Nav ===== */
+nav.main{background:var(--surface);border-bottom:1px solid var(--border);
+  position:sticky;z-index:5;overflow-x:auto;display:flex;gap:.35rem;
+  padding:.5rem .7rem;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+nav.main button{flex:0 0 auto;background:var(--surface2);border:1px solid var(--border);
+  border-radius:999px;padding:.4rem .85rem;font-size:.84em;color:var(--muted);
+  cursor:pointer;white-space:nowrap;font-family:inherit;min-height:36px;
+  transition:background .15s,border-color .15s,color .15s}
+nav.main button:hover:not(.active){background:var(--primary-l);color:var(--text)}
+nav.main button.active{background:var(--primary);border-color:var(--primary);
+  color:#fff;font-weight:600}
+
+/* ===== Layout ===== */
+main{padding:1.1rem 1rem 2.5rem;max-width:960px;margin:0 auto}
+section.scene{display:none}
+section.scene.active{display:block}
+.sec-label{font-size:.71em;font-weight:700;letter-spacing:.09em;
+  color:var(--muted);text-transform:uppercase;margin:.1rem 0 .4rem}
+
+/* ===== Cards ===== */
+.card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.15rem 1.2rem;margin-bottom:1.1rem;
+  box-shadow:0 1px 2px rgba(20,30,60,.04)}
+.card h2{margin:0 0 .55rem;color:var(--text);font-size:1.14em;font-weight:700;
+  letter-spacing:-.01em}
+.card h3{margin:.9rem 0 .3rem;color:var(--primary-d);font-size:.97em;font-weight:600}
+.card p{margin:.35rem 0;color:var(--text)}
+.lead{color:var(--muted);font-size:.92em;margin:.1rem 0 .7rem}
+
+/* ===== Formulas ===== */
+.formula{background:var(--primary-l);border-left:3px solid var(--primary);
+  padding:.6rem .9rem;margin:.5rem 0;border-radius:0 8px 8px 0;
+  font-family:"Cambria Math","STIX Two Math",Georgia,serif;font-size:1.05em;
+  overflow-x:auto;white-space:nowrap;line-height:1.9}
+.tip{background:#eaf6ec;border-left:3px solid #2e7d32;padding:.5rem .9rem;
+  margin:.55rem 0;border-radius:0 8px 8px 0;font-size:.9em}
+.warn{background:#fef6e6;border-left:3px solid #f9a825;padding:.5rem .9rem;
+  margin:.55rem 0;border-radius:0 8px 8px 0;font-size:.9em}
+
+/* ===== Simulation 2-column ===== */
+.sim-layout{display:grid;grid-template-columns:1.05fr 1fr;gap:1.15rem;align-items:start}
+@media(max-width:700px){.sim-layout{grid-template-columns:1fr}}
+.sim-pane,.ctrl-pane{min-width:0}
+
+/* ===== Controls ===== */
+.ctrl{display:grid;gap:.55rem;margin:0 0 .7rem}
+.ctrl label{display:flex;align-items:center;gap:.6rem;font-size:.89em}
+.ctrl label .nm{color:var(--muted);min-width:6.2em;font-size:.92em}
+.ctrl label input[type=range]{flex:1;min-width:0;min-height:26px;accent-color:var(--primary)}
+.ctrl label .v{min-width:3.9em;text-align:right;font-weight:700;
+  color:var(--primary-d);font-variant-numeric:tabular-nums;font-size:.95em}
+.ctrl select{padding:.42rem .6rem;border:1px solid var(--border);border-radius:8px;
+  font-size:.93em;background:var(--surface);width:100%;color:var(--text);font-family:inherit}
+
+/* ===== Readouts ===== */
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(108px,1fr));
+  gap:.42rem;margin:.55rem 0;font-size:.86em}
+.read .it{background:var(--surface2);padding:.42rem .58rem;border-radius:8px;
+  border:1px solid var(--border)}
+.read .it .l{color:var(--muted);font-size:.77em;display:block;margin-bottom:.12rem}
+.read .it .v{font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
+
+/* ===== Status badge ===== */
+.eqs{text-align:center;font-weight:600;padding:.52rem;border-radius:8px;
+  margin-top:.55rem;font-size:.89em}
+.eqs.ok{background:#d4edd6;color:#1b5e20}
+.eqs.no{background:#fbd8d8;color:#b71c1c}
+.eqs.lim{background:#fde9cc;color:#bf360c}
+
+/* ===== SVG ===== */
+svg.sim{width:100%;height:auto;background:#fcfdff;border:1px solid var(--border);
+  border-radius:8px;display:block;font-family:sans-serif}
+svg.sim.grab{cursor:grab}
+svg.sim.grab:active,svg.sim.grab.dragging{cursor:grabbing}
+
+/* ===== Legend ===== */
+.legend{display:flex;flex-wrap:wrap;gap:.35rem;margin:.45rem 0 0;font-size:.76em}
+.legend span{display:inline-flex;align-items:center;gap:.3rem;
+  background:var(--surface2);padding:.18rem .5rem;border-radius:999px;
+  border:1px solid var(--border)}
+.legend span i{display:inline-block;width:14px;height:3px;border-radius:2px}
+
+/* ===== Home grid ===== */
+.home-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.75rem}
+.home-card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:.95rem 1rem;cursor:pointer;text-align:left;
+  font-size:1em;font-family:inherit;color:inherit;
+  box-shadow:0 1px 2px rgba(20,30,60,.04);
+  transition:border-color .18s,box-shadow .18s,transform .14s}
+.home-card:hover{border-color:var(--primary);
+  box-shadow:0 4px 14px rgba(21,101,192,.12);transform:translateY(-2px)}
+.ico{width:2rem;height:2rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  color:var(--primary);opacity:.85}
+.ico svg{width:1.5rem;height:1.5rem}
+.home-card strong{color:var(--primary-d);display:block;margin-bottom:.12rem;font-size:.97em}
+.home-card span{color:var(--muted);font-size:.85em}
+
+/* ===== Quiz ===== */
+.quiz-hd{display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:.45rem;font-size:.83em}
+.quiz-bar-wrap{background:#e3e7ef;border-radius:999px;height:6px;
+  margin-bottom:.9rem;overflow:hidden}
+.quiz-bar-fill{background:var(--primary);height:100%;border-radius:999px;
+  transition:width .4s cubic-bezier(.4,0,.2,1)}
+.quiz-q{font-weight:600;margin:.2rem 0 .75rem;line-height:1.45;font-size:.95em}
+.quiz-opts{display:grid;gap:.38rem;margin-bottom:.45rem}
+.quiz-btn{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;
+  padding:.5rem .85rem;text-align:left;cursor:pointer;font-size:.87em;
+  font-family:inherit;color:var(--text);line-height:1.38;
+  transition:background .12s,border-color .12s}
+.quiz-btn:not(:disabled):hover{background:var(--primary-l);border-color:var(--primary)}
+.quiz-btn:disabled{cursor:default}
+.quiz-btn.correct{background:#d4edd6!important;border-color:#388e3c!important;
+  color:#1b5e20;font-weight:600}
+.quiz-btn.wrong{background:#fbd8d8!important;border-color:#c62828!important;color:#b71c1c}
+.quiz-exp{padding:.52rem .85rem;border-radius:8px;font-size:.85em;
+  line-height:1.5;margin:.45rem 0}
+.quiz-exp.ok{background:#eaf6ec;border-left:3px solid #388e3c;color:#1b5e20}
+.quiz-exp.no{background:#fdeaea;border-left:3px solid #c62828;color:#b71c1c}
+.quiz-next,.quiz-restart{background:var(--primary);color:#fff;border:0;border-radius:8px;
+  padding:.46rem 1.15rem;font-size:.87em;cursor:pointer;font-family:inherit;
+  transition:background .15s}
+.quiz-next{margin-top:.25rem}
+.quiz-next:hover,.quiz-restart:hover{background:var(--primary-d)}
+.quiz-done{text-align:center;padding:.7rem 0}
+.quiz-score-big{font-size:2.2em;font-weight:800;color:var(--primary-d);
+  display:block;margin-bottom:.25rem}
+.quiz-msg{color:var(--muted);margin:.15rem 0 .8rem;font-size:.92em}
+
+@media(max-width:520px){
+  main{padding:.8rem .7rem 2rem}
+  .card{padding:.9rem .95rem}
+  .ctrl label .nm{min-width:5.2em}
+}
+
+/* ===== Sub-nav (sotto-schede) ===== */
+nav.subnav{display:flex;gap:.3rem;margin-bottom:1rem;
+  border-bottom:1px solid var(--border);overflow-x:auto;padding-bottom:0}
+nav.subnav button{flex:0 0 auto;background:transparent;border:0;
+  border-bottom:2.5px solid transparent;padding:.55rem .95rem;
+  font-size:.9em;color:var(--muted);cursor:pointer;font-family:inherit;
+  font-weight:600;transition:color .15s,border-color .15s;margin-bottom:-1px;
+  border-radius:0}
+nav.subnav button:hover{color:var(--text)}
+nav.subnav button.active{color:var(--primary);border-bottom-color:var(--primary)}
+.subscene{display:none}
+.subscene.active{display:block}
+
+/* ===== Esercizi svolti ===== */
+.esercizio{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1rem 1.15rem;margin-bottom:.9rem;
+  box-shadow:0 1px 2px rgba(20,30,60,.04)}
+.esercizio h3{color:var(--primary);font-size:.97em;font-weight:700;
+  margin:0 0 .4rem;letter-spacing:-.005em}
+.esercizio .testo{color:var(--text);margin:.3rem 0 .65rem;font-size:.95em}
+.esercizio .dati{background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:.55rem .8rem;margin:.5rem 0;font-size:.87em;
+  color:var(--muted);font-family:"Cambria Math",Georgia,serif}
+.esercizio .dati b{color:var(--text);font-weight:600}
+.esercizio .step{margin:.5rem 0;padding-left:.6rem;border-left:2px solid var(--border)}
+.esercizio .step-t{font-weight:600;color:var(--text);font-size:.89em;margin-bottom:.15rem}
+.esercizio .step-b{color:var(--muted);font-size:.87em}
+.esercizio .risultato{background:rgba(21,101,192,.08);border-left:3px solid var(--primary);
+  padding:.55rem .85rem;margin:.7rem 0 0;border-radius:0 8px 8px 0;
+  font-weight:600;color:var(--primary-d);font-size:.95em}
+
+/* ===== Suggerimenti progressivi ===== */
+.ex-hint{background:#fffbf0;border-left:3px solid #f9a825;padding:.5rem .85rem;
+  margin:.45rem 0;border-radius:0 8px 8px 0;font-size:.88em;color:#6b5300;
+  animation:hintIn .25s ease}
+@keyframes hintIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.ex-hint .h-lab{display:block;font-size:.8em;font-weight:700;letter-spacing:.05em;
+  text-transform:uppercase;color:#a37800;margin-bottom:.12rem}
+.ex-actions{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem;align-items:center}
+.ex-btn{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;
+  padding:.4rem .85rem;font-size:.84em;cursor:pointer;font-family:inherit;
+  color:var(--primary-d);font-weight:600;transition:background .15s,border-color .15s}
+.ex-btn:hover{background:var(--primary-l);border-color:var(--primary)}
+.ex-btn.sol{background:var(--primary);border-color:var(--primary);color:#fff}
+.ex-btn.sol:hover{background:var(--primary-d)}
+.ex-count{font-size:.79em;color:var(--muted);margin-left:.1rem}
+.ex-sol{animation:hintIn .25s ease}
+.eserc-intro{color:var(--muted);font-size:.9em;margin:0 0 .9rem}
+
+/* ===== PRINT MODE ===== */
+.print-only{display:none}
+@media print{
+  nav.main,.btn-print,.sim-block,.quiz-block,.home-grid,nav.subnav{display:none!important}
+  .subscene{display:block!important}
+  .esercizio{page-break-inside:avoid;box-shadow:none;border:1px solid #ccc}
+  .ex-actions,.ex-hint,.eserc-intro{display:none!important}
+  .ex-sol{display:block!important}
+  header{position:static;border-bottom:2px solid #000;padding:.4rem 0}
+  header h1{font-size:1.3rem}
+  html,body{background:#fff;font-size:11pt}
+  main{max-width:100%;padding:0}
+  section.scene{display:block!important;page-break-inside:auto}
+  section.scene::before{content:attr(data-title);display:block;
+    font-size:1.25em;font-weight:800;color:#000;margin:1.1rem 0 .4rem;
+    border-bottom:1.5px solid #000;padding-bottom:.2rem}
+  section.scene#intro::before{content:none}
+  .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid;margin-bottom:.7rem}
+  .formula{background:#f1f1f1;border-left:3px solid #444}
+  .print-only{display:block}
+  .lead{display:none}
+}
+
+/* ===== Simulazione cinematica: grafici e playback ===== */
+.sim-graphs{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:.55rem}
+@media(max-width:560px){.sim-graphs{grid-template-columns:1fr}}
+.graph-box{min-width:0}
+.graph-box .g-cap{font-size:.72em;color:var(--muted);font-weight:600;margin:0 0 .15rem;text-align:center}
+svg.graph{width:100%;height:auto;background:#fcfdff;border:1px solid var(--border);border-radius:8px;display:block}
+svg#svgCad{height:430px;width:auto;max-width:100%;margin:0 auto}
+.playbar{display:flex;align-items:center;gap:.5rem;margin-top:.7rem;flex-wrap:wrap}
+.play-btn{background:var(--primary);color:#fff;border:0;border-radius:8px;padding:.42rem .9rem;
+  font-size:.86em;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;min-height:34px}
+.play-btn:hover{background:var(--primary-d)}
+.play-btn.sec{background:var(--surface2);color:var(--primary-d);border:1.5px solid var(--border)}
+.play-btn.sec:hover{background:var(--primary-l);border-color:var(--primary)}
+.playbar .scrub{flex:1;min-width:110px;accent-color:var(--primary);min-height:26px}
+.playbar .tlab{font-variant-numeric:tabular-nums;font-weight:700;color:var(--primary-d);
+  font-size:.85em;min-width:4.4em;text-align:right}
+.sim-mode{display:flex;gap:.3rem;margin-bottom:.6rem;flex-wrap:wrap}
+.sim-mode button{flex:1 1 auto;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;
+  padding:.4rem .5rem;font-size:.8em;color:var(--muted);cursor:pointer;font-family:inherit;font-weight:600;
+  transition:background .15s,border-color .15s,color .15s;min-height:34px}
+.sim-mode button:hover:not(.active){background:var(--primary-l);color:var(--text)}
+.sim-mode button.active{background:var(--primary);border-color:var(--primary);color:#fff}
+/* Nota storica */
+.story h3 .yr{font-size:.8em;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+.gtable{width:100%;border-collapse:collapse;margin:.5rem 0;font-size:.85em}
+.gtable th,.gtable td{border:1px solid var(--border);padding:.32rem .5rem;text-align:center}
+.gtable th{background:var(--surface2);color:var(--text);font-weight:600}
+.gtable td{color:var(--muted);font-variant-numeric:tabular-nums}
+@media print{.sim-graphs,.playbar,.sim-mode{display:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-brand">
+    <h1>Il moto dei corpi</h1>
+    <p class="header-sub">Cinematica interattiva — MRU, MRUA, caduta libera e moto parabolico</p>
+  </div>
+  <button class="btn-print" onclick="window.print()">Stampa teoria</button>
+</header>
+<nav class="main" id="mainNav">
+  <button data-tab="intro" class="active">Introduzione</button>
+  <button data-tab="mru">MRU</button>
+  <button data-tab="mrua">MRUA</button>
+  <button data-tab="caduta">Caduta libera</button>
+  <button data-tab="parab">Moto parabolico</button>
+  <button data-tab="quiz">Quiz finale</button>
+</nav>
+<main>
+
+<!-- ============ INTRO ============ -->
+<section class="scene active" id="intro" data-title="Introduzione">
+  <div class="card">
+    <h2>La cinematica: descrivere il moto</h2>
+    <p>La <strong>cinematica</strong> è la parte della meccanica che <strong>descrive il moto</strong> dei corpi — come cambiano posizione, velocità e accelerazione nel tempo — <em>senza chiedersi quali forze lo producano</em> (di questo si occupa la <strong>dinamica</strong>).</p>
+    <p>Per semplificare, il corpo si schematizza come <strong>punto materiale</strong>: un oggetto di dimensioni trascurabili rispetto al percorso, di cui interessa solo la posizione. La linea che il punto descrive nello spazio è la <strong>traiettoria</strong>.</p>
+    <div class="tip">Il moto è sempre <strong>relativo</strong>: esiste solo rispetto a un <strong>sistema di riferimento</strong>. Un passeggero è fermo rispetto al treno ma in moto rispetto alla stazione. Scegliere il riferimento (origine, asse, verso positivo) è il primo passo di ogni problema.</div>
+    <p>Le due relazioni che governano tutta la cinematica del punto sono la definizione di <strong>velocità</strong> e di <strong>accelerazione</strong>:</p>
+    <div class="formula">v<sub>media</sub> = Δs / Δt &nbsp;&nbsp;·&nbsp;&nbsp; a<sub>media</sub> = Δv / Δt</div>
+    <p class="lead">In queste pagine studierai quattro moti fondamentali, dal più semplice (velocità costante) alla traiettoria curva del moto parabolico. Ogni argomento è diviso in quattro parti: <strong>Teoria</strong>, <strong>Simulazione</strong> interattiva, <strong>Esercizi</strong> graduati e <strong>Quiz</strong>.</p>
+  </div>
+
+  <div class="card">
+    <h2>Le grandezze del moto</h2>
+    <h3>Posizione, spostamento e spazio percorso</h3>
+    <p>La <strong>posizione</strong> <em>s</em> individua dove si trova il punto sulla traiettoria rispetto all'origine. Lo <strong>spostamento</strong> Δs = s − s₀ è la <em>variazione</em> di posizione (ha un segno, dipende solo da inizio e fine). Lo <strong>spazio percorso</strong> è invece la lunghezza effettiva del cammino: coincide con |Δs| solo se il moto non cambia verso.</p>
+    <h3>Velocità</h3>
+    <p>La <strong>velocità media</strong> misura quanto rapidamente cambia la posizione: v = Δs/Δt. La <strong>velocità istantanea</strong> è la velocità in un preciso istante (quella del tachimetro). La velocità è una grandezza <strong>vettoriale</strong>: ha intensità, direzione e <strong>verso</strong> (in una dimensione, un segno + o −).</p>
+    <h3>Accelerazione</h3>
+    <p>L'<strong>accelerazione</strong> misura quanto rapidamente cambia la velocità: a = Δv/Δt. Se <em>a</em> ha lo stesso verso di <em>v</em> il moto accelera; se ha verso opposto, il moto rallenta (<strong>decelerazione</strong>).</p>
+    <h3>Unità di misura (Sistema Internazionale)</h3>
+    <table class="gtable">
+      <tr><th>Grandezza</th><th>Simbolo</th><th>Unità SI</th></tr>
+      <tr><td>tempo</td><td>t</td><td>secondo (s)</td></tr>
+      <tr><td>posizione / spostamento</td><td>s, Δs</td><td>metro (m)</td></tr>
+      <tr><td>velocità</td><td>v</td><td>m/s</td></tr>
+      <tr><td>accelerazione</td><td>a</td><td>m/s²</td></tr>
+    </table>
+    <div class="warn">Conversione utile: <strong>1 m/s = 3,6 km/h</strong>. Per passare da km/h a m/s si <em>divide</em> per 3,6; da m/s a km/h si <em>moltiplica</em> per 3,6. Esempio: 90 km/h = 90 / 3,6 = 25 m/s.</div>
+  </div>
+
+  <div class="card story">
+    <h2>Un percorso storico</h2>
+    <p>Per quasi duemila anni descrivere il moto è stato un problema irrisolto. La svolta arriva con Galileo, che per primo lo studia con misure ed esperimenti invece che con la sola filosofia.</p>
+
+    <h3>Aristotele <span class="yr">(384 – 322 a.C.)</span></h3>
+    <p>Distingue moto «naturale» e «violento» e sostiene — <em>erroneamente</em> — che i corpi più pesanti cadano più velocemente e che serva una forza per mantenere il moto. Le sue idee, pur sbagliate, dominano il pensiero fino al Rinascimento.</p>
+
+    <h3>Oresme e la scuola di Oxford <span class="yr">(XIV sec.)</span></h3>
+    <p>I «Calcolatori» del Merton College enunciano il <strong>teorema della velocità media</strong>: un moto uniformemente accelerato percorre lo stesso spazio di un moto uniforme alla velocità media. <strong>Nicola Oresme</strong> lo dimostra <em>graficamente</em>, inventando di fatto i <strong>diagrammi del moto</strong> (la velocità in funzione del tempo): l'area sotto il grafico è lo spazio percorso.</p>
+
+    <h3>Galileo Galilei <span class="yr">(1564 – 1642)</span></h3>
+    <p>Fonda la cinematica moderna. Con il <strong>piano inclinato</strong> «diluisce» la caduta per poterla misurare e scopre che, partendo da fermo, lo spazio è proporzionale al <strong>quadrato del tempo</strong> (s ∝ t²) e cresce come i <strong>numeri dispari</strong> (1, 3, 5, 7…). Dimostra che, trascurando l'aria, <strong>tutti i corpi cadono con la stessa accelerazione</strong>, indipendentemente dalla massa. Compone poi moto orizzontale uniforme e caduta verticale spiegando la <strong>traiettoria parabolica</strong> dei proiettili. Pubblica tutto nei <em>Discorsi e dimostrazioni matematiche</em> (1638).</p>
+
+    <h3>Isaac Newton <span class="yr">(1642 – 1727)</span></h3>
+    <p>Nei <em>Principia</em> (1687) collega la cinematica alle sue <strong>cause</strong>: le tre leggi della dinamica. Il principio d'inerzia spiega perché un corpo indisturbato prosegue di moto rettilineo uniforme, e la relazione F = ma spiega perché una forza costante produce accelerazione costante. La descrizione del moto diventa parte di una teoria unica.</p>
+
+    <div class="tip">Ogni argomento di questi appunti nasce da questa storia: l'MRU è il moto del principio d'inerzia, l'MRUA e la caduta libera sono le scoperte di Galileo, il moto parabolico è la sua composizione dei moti, e i grafici che userai sono l'eredità di Oresme.</div>
+  </div>
+
+  <p class="sec-label">Argomenti</p>
+  <div class="home-grid">
+    <button class="home-card" data-go="mru"><span class="ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="8" x2="13" y2="8"/><path d="M10 5l3 3-3 3"/><circle cx="2.5" cy="12" r=".6" fill="currentColor" stroke="none"/><circle cx="5.5" cy="12" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="12" r=".6" fill="currentColor" stroke="none"/><circle cx="11.5" cy="12" r=".6" fill="currentColor" stroke="none"/></svg></span><strong>Moto rettilineo uniforme</strong><span>Velocità costante · s = s₀ + v t</span></button>
+    <button class="home-card" data-go="mrua"><span class="ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="8" x2="13" y2="8"/><path d="M10 5l3 3-3 3"/><circle cx="2" cy="12" r=".55" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r=".55" fill="currentColor" stroke="none"/><circle cx="7" cy="12" r=".55" fill="currentColor" stroke="none"/><circle cx="11.5" cy="12" r=".55" fill="currentColor" stroke="none"/></svg></span><strong>Moto uniformemente accelerato</strong><span>Accelerazione costante · v² = v₀²+2aΔs</span></button>
+    <button class="home-card" data-go="caduta"><span class="ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="3.5" r="2"/><line x1="8" y1="6" x2="8" y2="12"/><path d="M5.5 9.5L8 12l2.5-2.5"/></svg></span><strong>Caduta libera e moto verticale</strong><span>Accelerazione di gravità g</span></button>
+    <button class="home-card" data-go="parab"><span class="ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 14C4 4 12 4 15 14"/><circle cx="8" cy="4.6" r="1.1" fill="currentColor" stroke="none"/></svg></span><strong>Moto parabolico</strong><span>Composizione di due moti</span></button>
+  </div>
+</section>
+
+<!-- ============ MRU ============ -->
+<section class="scene" id="mru" data-title="Moto rettilineo uniforme">
+  <nav class="subnav">
+    <button data-sub="teoria" class="active">Teoria</button>
+    <button data-sub="sim">Simulazione</button>
+    <button data-sub="eserc">Esercizi</button>
+    <button data-sub="quiz">Quiz</button>
+  </nav>
+
+  <div class="subscene active" data-sub="teoria">
+  <div class="card">
+    <h2>Moto rettilineo uniforme (MRU)</h2>
+    <p>Un punto materiale si muove di <strong>moto rettilineo uniforme</strong> quando la sua traiettoria è una <strong>retta</strong> e la sua <strong>velocità è costante</strong> in intensità e verso. Di conseguenza l'accelerazione è nulla:</p>
+    <div class="formula">v = costante &nbsp;&nbsp;·&nbsp;&nbsp; a = 0</div>
+    <p>«Uniforme» significa che il punto percorre <strong>spazi uguali in intervalli di tempo uguali</strong>: 5 m ogni secondo, sempre.</p>
+    <h3>Legge oraria</h3>
+    <p>La <strong>legge oraria</strong> dà la posizione in funzione del tempo. Partendo dalla definizione v = Δs/Δt = (s − s₀)/(t − 0) si ricava:</p>
+    <div class="formula">s = s₀ + v · t</div>
+    <p>dove <em>s₀</em> è la posizione iniziale (all'istante t = 0) e <em>v</em> la velocità (con il suo segno).</p>
+    <h3>I grafici del moto</h3>
+    <p>Il <strong>diagramma spazio–tempo (s–t)</strong> è una <strong>retta</strong>: la sua <strong>pendenza</strong> è la velocità. Più è ripida, più il moto è veloce; se scende, la velocità è negativa.</p>
+    <div class="formula">pendenza del grafico s–t = v</div>
+    <p>Il <strong>diagramma velocità–tempo (v–t)</strong> è una <strong>retta orizzontale</strong>. L'<strong>area</strong> compresa tra la retta e l'asse dei tempi è lo <strong>spostamento</strong>:</p>
+    <div class="formula">area del grafico v–t = Δs = v · t</div>
+    <h3>Il verso della velocità</h3>
+    <p>In una dimensione il verso è un <strong>segno</strong>. Con v &gt; 0 il punto avanza verso posizioni crescenti; con v &lt; 0 torna indietro. Nel MRU velocità media e velocità istantanea coincidono sempre.</p>
+    <div class="tip">Attenzione alla velocità media su un intero viaggio: se un tratto è veloce e uno lento, la velocità media <em>non</em> è la media delle due velocità, ma spazio totale diviso tempo totale.</div>
+  </div>
+  </div>
+
+  <div class="subscene" data-sub="sim">
+  <div class="card sim-block">
+    <p class="lead">Regola posizione iniziale e velocità, poi premi <strong>Avvia</strong>. Osserva come la posizione cresce in modo regolare: il grafico s–t è una retta, il grafico v–t è orizzontale.</p>
+    <div class="sim-layout">
+      <div class="sim-pane">
+        <svg class="sim" id="svgMru" viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="legend">
+          <span style="color:var(--vT)"><i style="background:var(--vT)"></i>Velocità v</span>
+          <span style="color:#455a64"><i style="background:#455a64"></i>Posizione s</span>
+        </div>
+        <div class="sim-graphs">
+          <div class="graph-box"><p class="g-cap">Spazio – tempo (s–t)</p><svg class="graph" id="gMruS" viewBox="0 0 220 150"></svg></div>
+          <div class="graph-box"><p class="g-cap">Velocità – tempo (v–t)</p><svg class="graph" id="gMruV" viewBox="0 0 220 150"></svg></div>
+        </div>
+      </div>
+      <div class="ctrl-pane">
+        <div class="ctrl">
+          <label><span class="nm">Posizione s₀</span><input type="range" id="mruS0" min="0" max="40" step="1" value="5"><span class="v" id="mruS0v">5 m</span></label>
+          <label><span class="nm">Velocità v</span><input type="range" id="mruV" min="-10" max="10" step="0.5" value="4"><span class="v" id="mruVv">4 m/s</span></label>
+        </div>
+        <div class="read">
+          <div class="it"><span class="l">Tempo t</span><span class="v" id="mruTr">0,0</span> s</div>
+          <div class="it"><span class="l">Posizione s</span><span class="v" id="mruSr">—</span> m</div>
+          <div class="it"><span class="l">Velocità v</span><span class="v" id="mruVr">—</span> m/s</div>
+          <div class="it"><span class="l">Spazio perc.</span><span class="v" id="mruDr">—</span> m</div>
+        </div>
+        <div class="playbar">
+          <button class="play-btn" id="mruPlay">▶ Avvia</button>
+          <button class="play-btn sec" id="mruReset">↺ Azzera</button>
+          <input type="range" class="scrub" id="mruScrub" min="0" max="1000" value="0">
+          <span class="tlab" id="mruTlab">0,0 s</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="subscene" data-sub="eserc"><div id="ex-mru" class="eserc-block"></div></div>
+  <div class="subscene" data-sub="quiz"><div id="qz-mru" class="quiz-block"></div></div>
+</section>
+
+<!-- ============ MRUA ============ -->
+<section class="scene" id="mrua" data-title="Moto rettilineo uniformemente accelerato">
+  <nav class="subnav">
+    <button data-sub="teoria" class="active">Teoria</button>
+    <button data-sub="sim">Simulazione</button>
+    <button data-sub="eserc">Esercizi</button>
+    <button data-sub="quiz">Quiz</button>
+  </nav>
+
+  <div class="subscene active" data-sub="teoria">
+  <div class="card">
+    <h2>Moto rettilineo uniformemente accelerato (MRUA)</h2>
+    <p>Un punto si muove di <strong>moto uniformemente accelerato</strong> quando la traiettoria è rettilinea e l'<strong>accelerazione è costante</strong>. La velocità non è più costante: cambia della stessa quantità in ogni secondo.</p>
+    <div class="formula">a = costante</div>
+    <h3>Legge della velocità</h3>
+    <p>Dalla definizione a = Δv/Δt, con velocità iniziale <em>v₀</em>, si ottiene una relazione lineare nel tempo:</p>
+    <div class="formula">v = v₀ + a · t</div>
+    <h3>Legge oraria (posizione)</h3>
+    <p>La posizione cresce con un termine quadratico nel tempo:</p>
+    <div class="formula">s = s₀ + v₀ · t + ½ · a · t²</div>
+    <p>Poiché in questo moto la velocità varia in modo lineare, la <strong>velocità media</strong> è la media aritmetica di quella iniziale e finale:</p>
+    <div class="formula">v<sub>media</sub> = (v₀ + v) / 2 &nbsp;&nbsp;⇒&nbsp;&nbsp; Δs = (v₀ + v)/2 · t</div>
+    <h3>Equazione senza tempo (Torricelli)</h3>
+    <p>Combinando le due leggi ed eliminando <em>t</em> si ottiene una relazione che lega velocità e spazio, utile quando il tempo non è noto:</p>
+    <div class="formula">v² = v₀² + 2 · a · Δs</div>
+    <h3>I grafici del moto</h3>
+    <p>Il diagramma <strong>v–t</strong> è una <strong>retta inclinata</strong>: la sua pendenza è l'accelerazione, l'area sotto di essa è lo spostamento. Il diagramma <strong>s–t</strong> è un <strong>arco di parabola</strong>, sempre più ripido (moto accelerato) o sempre meno ripido (moto decelerato).</p>
+    <div class="formula">pendenza del grafico v–t = a &nbsp;&nbsp;·&nbsp;&nbsp; area del grafico v–t = Δs</div>
+    <div class="warn"><strong>Decelerazione:</strong> il moto rallenta quando <em>a</em> ha <strong>verso opposto</strong> a <em>v</em> (segni diversi). Non basta che <em>a</em> sia «negativa»: conta il confronto con il verso della velocità.</div>
+    <div class="tip"><strong>Legge dei numeri dispari (Galileo):</strong> partendo da fermo, gli spazi percorsi in secondi successivi stanno come 1 : 3 : 5 : 7 …, perché lo spazio totale cresce come t².</div>
+  </div>
+  </div>
+
+  <div class="subscene" data-sub="sim">
+  <div class="card sim-block">
+    <p class="lead">Imposta velocità iniziale e accelerazione. Con segni concordi il moto accelera, con segni discordi rallenta e può invertire il verso. Il grafico v–t è una retta, il grafico s–t una parabola.</p>
+    <div class="sim-layout">
+      <div class="sim-pane">
+        <svg class="sim" id="svgMrua" viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="legend">
+          <span style="color:var(--vT)"><i style="background:var(--vT)"></i>Velocità v</span>
+          <span style="color:var(--vF)"><i style="background:var(--vF)"></i>Accelerazione a</span>
+        </div>
+        <div class="sim-graphs">
+          <div class="graph-box"><p class="g-cap">Velocità – tempo (v–t)</p><svg class="graph" id="gMruaV" viewBox="0 0 220 150"></svg></div>
+          <div class="graph-box"><p class="g-cap">Spazio – tempo (s–t)</p><svg class="graph" id="gMruaS" viewBox="0 0 220 150"></svg></div>
+        </div>
+      </div>
+      <div class="ctrl-pane">
+        <div class="ctrl">
+          <label><span class="nm">Velocità v₀</span><input type="range" id="mruaV0" min="-10" max="15" step="0.5" value="0"><span class="v" id="mruaV0v">0 m/s</span></label>
+          <label><span class="nm">Acceleraz. a</span><input type="range" id="mruaA" min="-6" max="6" step="0.2" value="2"><span class="v" id="mruaAv">2 m/s²</span></label>
+        </div>
+        <div class="read">
+          <div class="it"><span class="l">Tempo t</span><span class="v" id="mruaTr">0,0</span> s</div>
+          <div class="it"><span class="l">Posizione s</span><span class="v" id="mruaSr">—</span> m</div>
+          <div class="it"><span class="l">Velocità v</span><span class="v" id="mruaVr">—</span> m/s</div>
+          <div class="it"><span class="l">Acceleraz. a</span><span class="v" id="mruaAr">—</span> m/s²</div>
+        </div>
+        <div class="playbar">
+          <button class="play-btn" id="mruaPlay">▶ Avvia</button>
+          <button class="play-btn sec" id="mruaReset">↺ Azzera</button>
+          <input type="range" class="scrub" id="mruaScrub" min="0" max="1000" value="0">
+          <span class="tlab" id="mruaTlab">0,0 s</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="subscene" data-sub="eserc"><div id="ex-mrua" class="eserc-block"></div></div>
+  <div class="subscene" data-sub="quiz"><div id="qz-mrua" class="quiz-block"></div></div>
+</section>
+
+<!-- ============ CADUTA LIBERA ============ -->
+<section class="scene" id="caduta" data-title="Caduta libera e moto verticale">
+  <nav class="subnav">
+    <button data-sub="teoria" class="active">Teoria</button>
+    <button data-sub="sim">Simulazione</button>
+    <button data-sub="eserc">Esercizi</button>
+    <button data-sub="quiz">Quiz</button>
+  </nav>
+
+  <div class="subscene active" data-sub="teoria">
+  <div class="card">
+    <h2>Caduta libera e moto verticale</h2>
+    <p>Vicino alla superficie terrestre, <strong>trascurando la resistenza dell'aria</strong>, tutti i corpi cadono con la <strong>stessa accelerazione</strong>, diretta verso il basso, detta <strong>accelerazione di gravità</strong>:</p>
+    <div class="formula">g ≈ 9,81 m/s²</div>
+    <p>È la grande scoperta di Galileo: l'accelerazione di caduta <strong>non dipende dalla massa</strong>. Una piuma e un martello, nel vuoto, toccano terra insieme. Il moto verticale è quindi un <strong>MRUA</strong> con accelerazione <em>g</em>: valgono tutte le formule già viste.</p>
+
+    <h3>Caduta libera da fermo</h3>
+    <p>Un corpo lasciato cadere (v₀ = 0). Conviene prendere <strong>positivo il verso del moto (verso il basso)</strong>, così a = +g. Dette <em>h</em> l'altezza di caduta e <em>t</em> il tempo:</p>
+    <div class="formula">v = g · t &nbsp;&nbsp;·&nbsp;&nbsp; h = ½ · g · t²</div>
+    <p>Da queste si ricavano il tempo di caduta e la velocità con cui arriva a terra:</p>
+    <div class="formula">t = √(2h / g) &nbsp;&nbsp;·&nbsp;&nbsp; v = √(2 · g · h)</div>
+
+    <h3>Lancio verso l'alto</h3>
+    <p>Se il corpo è lanciato verso l'alto con velocità iniziale <em>v₀</em>, conviene prendere <strong>positivo il verso verso l'alto</strong>: allora l'accelerazione è opposta al verso positivo, a = −g. Le leggi diventano:</p>
+    <div class="formula">v = v₀ − g · t &nbsp;&nbsp;·&nbsp;&nbsp; y = v₀ · t − ½ · g · t²</div>
+    <p>Il corpo <strong>sale rallentando</strong>, si ferma un istante (v = 0) nel punto più alto, poi ricade accelerando. Nel punto più alto:</p>
+    <div class="formula">t<sub>salita</sub> = v₀ / g &nbsp;&nbsp;·&nbsp;&nbsp; h<sub>max</sub> = v₀² / (2g)</div>
+    <div class="tip"><strong>Simmetria del moto:</strong> il tempo di salita è uguale al tempo di discesa, e il corpo ripassa da ogni quota con velocità di uguale intensità ma verso opposto. Il tempo totale di volo (ritorno al punto di lancio) è t<sub>volo</sub> = 2v₀/g.</div>
+    <div class="warn">La velocità cambia di continuo, ma l'accelerazione resta <strong>sempre g verso il basso</strong>, anche nell'istante in cui, nel punto più alto, la velocità è nulla. Velocità zero <em>non</em> significa accelerazione zero.</div>
+  </div>
+  </div>
+
+  <div class="subscene" data-sub="sim">
+  <div class="card sim-block">
+    <p class="lead">Scegli il tipo di moto, regola altezza iniziale e velocità di lancio, poi premi Avvia. Il verso positivo è verso l'alto: una velocità negativa indica moto verso il basso.</p>
+    <div class="sim-mode" id="cadMode">
+      <button data-mode="free" class="active">Caduta libera</button>
+      <button data-mode="up">Lancio in alto</button>
+      <button data-mode="down">Lancio in basso</button>
+    </div>
+    <div class="sim-layout">
+      <div class="sim-pane">
+        <svg class="sim" id="svgCad" viewBox="0 0 200 300" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="legend">
+          <span style="color:var(--vP)"><i style="background:var(--vP)"></i>Velocità v</span>
+          <span style="color:var(--vF)"><i style="background:var(--vF)"></i>Gravità g</span>
+        </div>
+      </div>
+      <div class="ctrl-pane">
+        <div class="ctrl">
+          <label><span class="nm">Altezza h₀</span><input type="range" id="cadH0" min="0" max="80" step="1" value="45"><span class="v" id="cadH0v">45 m</span></label>
+          <label><span class="nm">Velocità v₀</span><input type="range" id="cadV0" min="0" max="30" step="1" value="0"><span class="v" id="cadV0v">0 m/s</span></label>
+        </div>
+        <div class="read">
+          <div class="it"><span class="l">Tempo t</span><span class="v" id="cadTr">0,0</span> s</div>
+          <div class="it"><span class="l">Altezza y</span><span class="v" id="cadYr">—</span> m</div>
+          <div class="it"><span class="l">Velocità v</span><span class="v" id="cadVr">—</span> m/s</div>
+          <div class="it"><span class="l">Quota max</span><span class="v" id="cadHmax">—</span> m</div>
+        </div>
+        <div class="sim-graphs">
+          <div class="graph-box"><p class="g-cap">Altezza – tempo (y–t)</p><svg class="graph" id="gCadY" viewBox="0 0 220 150"></svg></div>
+          <div class="graph-box"><p class="g-cap">Velocità – tempo (v–t)</p><svg class="graph" id="gCadV" viewBox="0 0 220 150"></svg></div>
+        </div>
+        <div class="playbar">
+          <button class="play-btn" id="cadPlay">▶ Avvia</button>
+          <button class="play-btn sec" id="cadReset">↺ Azzera</button>
+          <input type="range" class="scrub" id="cadScrub" min="0" max="1000" value="0">
+          <span class="tlab" id="cadTlab">0,0 s</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="subscene" data-sub="eserc"><div id="ex-caduta" class="eserc-block"></div></div>
+  <div class="subscene" data-sub="quiz"><div id="qz-caduta" class="quiz-block"></div></div>
+</section>
+
+<!-- ============ MOTO PARABOLICO ============ -->
+<section class="scene" id="parab" data-title="Moto parabolico">
+  <nav class="subnav">
+    <button data-sub="teoria" class="active">Teoria</button>
+    <button data-sub="sim">Simulazione</button>
+    <button data-sub="eserc">Esercizi</button>
+    <button data-sub="quiz">Quiz</button>
+  </nav>
+
+  <div class="subscene active" data-sub="teoria">
+  <div class="card">
+    <h2>Moto parabolico</h2>
+    <p>Il moto parabolico è il moto di un corpo lanciato nello spazio e soggetto alla sola gravità (un <strong>proiettile</strong>). Galileo lo spiega con il <strong>principio di composizione dei moti</strong>: la traiettoria curva nasce dalla combinazione di <strong>due moti indipendenti</strong>.</p>
+    <div class="formula" style="white-space:pre-line">orizzontale → MRU:  v<sub>x</sub> = costante
+verticale  → caduta libera:  a = g verso il basso</div>
+    <p>I due moti <strong>non si disturbano</strong>: il tempo è l'unica grandezza che condividono. Scegliamo l'origine nel punto di lancio, l'asse <em>x</em> orizzontale e l'asse <em>y</em> verticale verso l'alto.</p>
+
+    <h3>Lancio orizzontale (da un'altezza h)</h3>
+    <p>Velocità iniziale solo orizzontale (v₀ₓ = v₀, v₀ᵧ = 0). Le due leggi orarie sono:</p>
+    <div class="formula">x = v₀ · t &nbsp;&nbsp;·&nbsp;&nbsp; y = h − ½ · g · t²</div>
+    <p>Il corpo tocca terra quando y = 0, nello <strong>stesso tempo</strong> di un corpo lasciato semplicemente cadere dalla stessa altezza:</p>
+    <div class="formula">t<sub>volo</sub> = √(2h / g) &nbsp;&nbsp;·&nbsp;&nbsp; gittata = v₀ · √(2h / g)</div>
+
+    <h3>Lancio obliquo (dal suolo, angolo θ)</h3>
+    <p>La velocità iniziale si scompone nelle due direzioni:</p>
+    <div class="formula">v₀ₓ = v₀ cos θ &nbsp;&nbsp;·&nbsp;&nbsp; v₀ᵧ = v₀ sin θ</div>
+    <p>La componente orizzontale resta costante; quella verticale segue il lancio verso l'alto. Si ricavano tempo di volo, altezza massima e gittata:</p>
+    <div class="formula">t<sub>volo</sub> = 2 v₀ sin θ / g</div>
+    <div class="formula">h<sub>max</sub> = v₀² sin²θ / (2g)</div>
+    <div class="formula">gittata  R = v₀² sin(2θ) / g</div>
+    <div class="tip"><strong>Gittata massima a 45°.</strong> Poiché R dipende da sin(2θ), la gittata è massima quando 2θ = 90°, cioè θ = 45°. Inoltre due angoli <strong>complementari</strong> (per esempio 30° e 60°) danno la <strong>stessa gittata</strong>.</div>
+    <div class="warn">La traiettoria è una <strong>parabola</strong>. Nel punto più alto la velocità <em>non</em> è nulla: si annulla solo la componente verticale v<sub>y</sub>, mentre v<sub>x</sub> resta invariata per tutto il volo.</div>
+  </div>
+  </div>
+
+  <div class="subscene" data-sub="sim">
+  <div class="card sim-block">
+    <p class="lead">Cambia velocità e angolo di lancio e osserva la parabola. I vettori mostrano la scomposizione della velocità: v<sub>x</sub> (verde) resta costante, v<sub>y</sub> (rosso) diminuisce, si annulla in cima e cambia verso.</p>
+    <div class="sim-mode" id="parMode">
+      <button data-mode="obl" class="active">Lancio obliquo (da terra)</button>
+      <button data-mode="oriz">Lancio orizzontale (da altezza)</button>
+    </div>
+    <div class="sim-layout">
+      <div class="sim-pane">
+        <svg class="sim" id="svgPar" viewBox="0 0 420 220" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="legend">
+          <span style="color:var(--vN)"><i style="background:var(--vN)"></i>v<sub>x</sub> (orizz.)</span>
+          <span style="color:var(--vP)"><i style="background:var(--vP)"></i>v<sub>y</sub> (vert.)</span>
+          <span style="color:var(--vT)"><i style="background:var(--vT)"></i>v (totale)</span>
+        </div>
+        <div class="sim-graphs">
+          <div class="graph-box"><p class="g-cap">Posizioni x, y – tempo</p><svg class="graph" id="gParXY" viewBox="0 0 220 150"></svg></div>
+          <div class="graph-box"><p class="g-cap">Velocità vₓ, vᵧ – tempo</p><svg class="graph" id="gParV" viewBox="0 0 220 150"></svg></div>
+        </div>
+      </div>
+      <div class="ctrl-pane">
+        <div class="ctrl">
+          <label><span class="nm">Velocità v₀</span><input type="range" id="parV0" min="5" max="35" step="1" value="20"><span class="v" id="parV0v">20 m/s</span></label>
+          <label><span class="nm">Angolo θ</span><input type="range" id="parAng" min="5" max="85" step="1" value="45"><span class="v" id="parAngv">45°</span></label>
+          <label><span class="nm">Altezza h₀</span><input type="range" id="parH0" min="0" max="60" step="1" value="0"><span class="v" id="parH0v">0 m</span></label>
+        </div>
+        <div class="read">
+          <div class="it"><span class="l">Tempo t</span><span class="v" id="parTr">0,0</span> s</div>
+          <div class="it"><span class="l">Gittata</span><span class="v" id="parRr">—</span> m</div>
+          <div class="it"><span class="l">Altezza max</span><span class="v" id="parHr">—</span> m</div>
+          <div class="it"><span class="l">Tempo volo</span><span class="v" id="parTv">—</span> s</div>
+          <div class="it"><span class="l">v₀ₓ</span><span class="v" id="parVx">—</span> m/s</div>
+          <div class="it"><span class="l">v₀ᵧ</span><span class="v" id="parVy">—</span> m/s</div>
+        </div>
+        <div class="playbar">
+          <button class="play-btn" id="parPlay">▶ Avvia</button>
+          <button class="play-btn sec" id="parReset">↺ Azzera</button>
+          <input type="range" class="scrub" id="parScrub" min="0" max="1000" value="0">
+          <span class="tlab" id="parTlab">0,0 s</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="subscene" data-sub="eserc"><div id="ex-parab" class="eserc-block"></div></div>
+  <div class="subscene" data-sub="quiz"><div id="qz-parab" class="quiz-block"></div></div>
+</section>
+
+<!-- ============ QUIZ RIEPILOGATIVO ============ -->
+<section class="scene" id="quiz" data-title="Quiz riepilogativo">
+  <div class="card">
+    <h2>Quiz riepilogativo</h2>
+    <p class="lead">Un'unica batteria di domande su <strong>tutti</strong> gli argomenti — MRU, MRUA, caduta libera e moto parabolico — per verificare la comprensione complessiva. Ad ogni risposta compare subito la spiegazione; alla fine ottieni il punteggio.</p>
+  </div>
+  <div id="qz-riepilogo" class="quiz-block"></div>
+</section>
+
+</main>
+<script>
+"use strict";
+/* ==================== COSTANTI ==================== */
+const G = 9.81;
+const SPEED = 1;                 // 1 = tempo reale
+const COL = {v:'#1565c0', a:'#f57c00', pos:'#455a64', vx:'#2e7d32', vy:'#e53935', vtot:'#1565c0', traj:'#7b1fa2', ground:'#5b6470'};
+
+/* ==================== UTILITY ==================== */
+const val = id => { const e=document.getElementById(id); return e?+e.value:0; };
+const setTxt = (id,t) => { const e=document.getElementById(id); if(e) e.textContent=t; };
+function nf(x,d){ if(x==null||!isFinite(x)) return '—'; return x.toFixed(d==null?1:d).replace('.',','); }
+function span(vals,pad){
+  let mn=Math.min(0,...vals), mx=Math.max(0,...vals);
+  if(mx-mn<1e-6) mx=mn+1;
+  const p=(mx-mn)*(pad==null?0.12:pad);
+  return [mn - (mn<0?p:0), mx + (mx>0?p:0)];
+}
+function niceStep(x){
+  if(x<=0) return 1;
+  const p=Math.pow(10,Math.floor(Math.log10(x))), f=x/p;
+  return (f<1.5?1:f<3?2:f<7?5:10)*p;
+}
+function niceTicks(min,max,n){
+  const span=max-min; if(span<=0) return [min];
+  const step=niceStep(span/(n||4)), out=[];
+  for(let v=Math.ceil(min/step-1e-9)*step; v<=max+1e-9; v+=step) out.push(Math.abs(v)<1e-9?0:v);
+  return out;
+}
+function fmtTick(v){
+  if(Math.abs(v-Math.round(v))<1e-9) return Math.round(v).toString();
+  return v.toFixed(1).replace('.',',');
+}
+
+/* ===== Freccia vettoriale (stringa SVG) ===== */
+function arrow(x1,y1,x2,y2,color,label){
+  const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy);
+  if(L<0.6) return '';
+  const ux=dx/L, uy=dy/L, tipL=Math.min(9,L*0.5), tipW=tipL*0.55;
+  const bx=x2-tipL*ux, by=y2-tipL*uy;
+  const lx=bx-tipW*uy, ly=by+tipW*ux, rx=bx+tipW*uy, ry=by-tipW*ux;
+  let lbl='';
+  if(label){
+    const tx=x2+11*ux-4*uy, ty=y2+11*uy+4*ux;
+    lbl=`<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" fill="${color}" font-size="12" font-weight="700" text-anchor="middle" dominant-baseline="middle">${label}</text>`;
+  }
+  return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="${color}" stroke-width="2.4" stroke-linecap="round"/>`+
+    `<polygon points="${x2.toFixed(1)},${y2.toFixed(1)} ${lx.toFixed(1)},${ly.toFixed(1)} ${rx.toFixed(1)},${ry.toFixed(1)}" fill="${color}"/>${lbl}`;
+}
+
+/* ===== Mini-grafico cartesiano ===== */
+function plot(id,o){
+  const svg=document.getElementById(id); if(!svg) return;
+  const W=220,H=150,mL=34,mR=10,mT=12,mB=26, iw=W-mL-mR, ih=H-mT-mB;
+  const xmax=o.xmax>0?o.xmax:1;
+  let ymin=(o.ymin==null?0:o.ymin), ymax=(o.ymax==null?1:o.ymax);
+  if(ymax-ymin<1e-6) ymax=ymin+1;
+  const PX=x=>mL+(x/xmax)*iw;
+  const PY=y=>mT+ih-((y-ymin)/(ymax-ymin))*ih;
+  const yz=Math.max(ymin,Math.min(ymax,0));
+  let s='';
+  s+=`<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+ih}" stroke="#9aa3b2" stroke-width="1.2"/>`;
+  s+=`<line x1="${mL}" y1="${PY(yz).toFixed(1)}" x2="${mL+iw}" y2="${PY(yz).toFixed(1)}" stroke="#9aa3b2" stroke-width="1.2"/>`;
+  niceTicks(ymin,ymax,4).forEach(v=>{ const yy=PY(v);
+    s+=`<line x1="${mL-3}" y1="${yy.toFixed(1)}" x2="${mL}" y2="${yy.toFixed(1)}" stroke="#9aa3b2" stroke-width="1"/>`;
+    s+=`<text x="${mL-5}" y="${(yy+3).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="end">${fmtTick(v)}</text>`; });
+  niceTicks(0,xmax,4).forEach(v=>{ if(v<=1e-9) return; const xx=PX(v);
+    s+=`<line x1="${xx.toFixed(1)}" y1="${(mT+ih).toFixed(1)}" x2="${xx.toFixed(1)}" y2="${(mT+ih+3).toFixed(1)}" stroke="#9aa3b2" stroke-width="1"/>`;
+    s+=`<text x="${xx.toFixed(1)}" y="${(mT+ih+13).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="middle">${fmtTick(v)}</text>`; });
+  s+=`<text x="${mL+iw}" y="${(mT+ih+22).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="end">${o.xlabel||'t (s)'}</text>`;
+  if(o.ylabel) s+=`<text x="${mL-2}" y="${mT-3}" font-size="9" fill="#6b7280" text-anchor="start">${o.ylabel}</text>`;
+  (o.curves||[]).forEach(c=>{ if(!c.pts||c.pts.length<2) return;
+    const d=c.pts.map((p,i)=>`${i?'L':'M'}${PX(p[0]).toFixed(1)},${PY(p[1]).toFixed(1)}`).join(' ');
+    s+=`<path d="${d}" fill="none" stroke="${c.color}" stroke-width="${c.w||2}" ${c.dash?`stroke-dasharray="${c.dash}"`:''} stroke-linejoin="round" stroke-linecap="round"/>`; });
+  (o.markers||[]).forEach(m=>{ const mx=PX(m.x), my=PY(m.y);
+    s+=`<line x1="${mx.toFixed(1)}" y1="${my.toFixed(1)}" x2="${mx.toFixed(1)}" y2="${PY(yz).toFixed(1)}" stroke="${m.color}" stroke-width="1" stroke-dasharray="3 3" opacity=".55"/>`;
+    s+=`<circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="3.6" fill="${m.color}"/>`; });
+  svg.innerHTML=s;
+}
+
+/* ==================== NAVIGAZIONE ==================== */
+const navBtns=document.querySelectorAll('#mainNav button');
+const scenes=document.querySelectorAll('section.scene');
+function showTab(name){
+  navBtns.forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+  scenes.forEach(s=>s.classList.toggle('active', s.id===name));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+navBtns.forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+document.querySelectorAll('.home-card').forEach(c=>c.addEventListener('click',()=>showTab(c.dataset.go)));
+document.querySelectorAll('nav.subnav').forEach(sub=>{
+  const btns=sub.querySelectorAll('button'), container=sub.parentElement;
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    const sel=b.dataset.sub;
+    btns.forEach(bb=>bb.classList.toggle('active', bb===b));
+    container.querySelectorAll(':scope > .subscene').forEach(s=>s.classList.toggle('active', s.dataset.sub===sel));
+  }));
+});
+function bindRange(id,valId,fmt){
+  const el=document.getElementById(id), out=document.getElementById(valId);
+  if(!el||!out) return el;
+  const upd=()=>{ out.textContent=fmt?fmt(+el.value):el.value; };
+  el.addEventListener('input',upd); upd(); return el;
+}
+
+/* ==================== CONTROLLER SIMULAZIONI ==================== */
+function makeSim(cfg){
+  const key=cfg.key, st={t:0,playing:false,last:0,raf:0};
+  const playBtn=document.getElementById(key+'Play');
+  const resetBtn=document.getElementById(key+'Reset');
+  const scrub=document.getElementById(key+'Scrub');
+  const tlab=document.getElementById(key+'Tlab');
+  let scrubbing=false;
+  const dur=()=>Math.max(0.05,cfg.duration());
+  function draw(){
+    cfg.render(st.t);
+    const D=dur();
+    if(scrub && !scrubbing) scrub.value=Math.round(Math.min(1,st.t/D)*1000);
+    if(tlab) tlab.textContent=nf(st.t,1)+' s';
+  }
+  function label(){ if(playBtn) playBtn.innerHTML=st.playing?'❚❚ Pausa':'▶ Avvia'; }
+  function frame(now){
+    if(!st.playing) return;
+    if(!st.last) st.last=now;
+    let dt=(now-st.last)/1000; st.last=now;
+    if(dt>0.05) dt=0.05;
+    st.t+=dt*SPEED;
+    if(st.t>=dur()){ st.t=dur(); st.playing=false; label(); }
+    draw();
+    if(st.playing) st.raf=requestAnimationFrame(frame);
+  }
+  function play(){
+    if(st.playing){ st.playing=false; label(); return; }
+    if(st.t>=dur()-1e-6) st.t=0;
+    st.playing=true; st.last=0; label(); st.raf=requestAnimationFrame(frame);
+  }
+  function reset(){ st.playing=false; st.t=0; label(); draw(); }
+  function onParam(){ if(st.t>dur()) st.t=dur(); draw(); }
+  if(playBtn) playBtn.addEventListener('click',play);
+  if(resetBtn) resetBtn.addEventListener('click',reset);
+  if(scrub){
+    scrub.addEventListener('input',()=>{ scrubbing=true; st.playing=false; label(); st.t=scrub.value/1000*dur(); draw(); });
+    scrub.addEventListener('change',()=>{ scrubbing=false; });
+  }
+  (cfg.params||[]).forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input',onParam); });
+  return {draw,reset,onParam,state:st};
+}
+
+/* ==================== SCENA ORIZZONTALE (MRU / MRUA) ==================== */
+function drawTrack(svgId,s,v,lo,hi,opt){
+  opt=opt||{};
+  const svg=document.getElementById(svgId); if(!svg) return;
+  if(hi-lo<1e-6) hi=lo+1;
+  const PX=x=>28+(x-lo)/(hi-lo)*344;
+  const roadY=104, bw=30, bh=15, by=roadY-4-bh, px=PX(s);
+  let g='';
+  g+=`<line x1="16" y1="${roadY}" x2="384" y2="${roadY}" stroke="${COL.ground}" stroke-width="2"/>`;
+  for(let x=20;x<384;x+=14) g+=`<line x1="${x}" y1="${roadY}" x2="${x-6}" y2="${roadY+7}" stroke="#c2c9d6" stroke-width="1"/>`;
+  niceTicks(lo,hi,5).forEach(sv=>{ const xx=PX(sv); if(xx<16||xx>384) return;
+    g+=`<line x1="${xx.toFixed(1)}" y1="${roadY}" x2="${xx.toFixed(1)}" y2="${roadY-5}" stroke="#9aa3b2" stroke-width="1"/>`;
+    g+=`<text x="${xx.toFixed(1)}" y="${roadY+18}" font-size="9" fill="#6b7280" text-anchor="middle">${fmtTick(sv)}</text>`; });
+  g+=`<text x="380" y="14" font-size="10" fill="#6b7280" text-anchor="end">s = ${nf(s,1)} m</text>`;
+  // veicolo
+  g+=`<rect x="${(px-bw/2).toFixed(1)}" y="${by}" width="${bw}" height="${bh}" rx="4" fill="#dfe8f7" stroke="${COL.v}" stroke-width="1.6"/>`;
+  g+=`<rect x="${(px-bw/2+5).toFixed(1)}" y="${by+3}" width="8" height="6" rx="1.5" fill="#bcd0f0"/>`;
+  g+=`<circle cx="${(px-bw/2+7).toFixed(1)}" cy="${roadY-3}" r="3.8" fill="#37474f"/>`;
+  g+=`<circle cx="${(px+bw/2-7).toFixed(1)}" cy="${roadY-3}" r="3.8" fill="#37474f"/>`;
+  // frecce
+  const lv=Math.min(46,Math.abs(v)*4.0);
+  if(lv>1) g+=arrow(px,by-10,px+Math.sign(v)*lv,by-10,COL.v,'v');
+  if(opt.a!=null){ const la=Math.min(46,Math.abs(opt.a)*6.5);
+    if(la>1) g+=arrow(px,by-30,px+Math.sign(opt.a)*la,by-30,COL.a,'a'); }
+  svg.innerHTML=g;
+}
+
+/* ==================== MRU ==================== */
+function mruRender(t){
+  const s0=val('mruS0'), v=val('mruV'), T=10;
+  const s=s0+v*t, sB=s0+v*T;
+  let lo=Math.min(s0,sB), hi=Math.max(s0,sB);
+  if(hi-lo<8) hi=lo+8;
+  const pad=(hi-lo)*0.08+1;
+  drawTrack('svgMru', s, v, lo-pad, hi+pad);
+  setTxt('mruTr',nf(t,1)); setTxt('mruSr',nf(s,1)); setTxt('mruVr',nf(v,1)); setTxt('mruDr',nf(Math.abs(v)*t,1));
+  const sy=span([s0,sB]);
+  plot('gMruS',{xmax:T,ymin:sy[0],ymax:sy[1],ylabel:'s (m)',curves:[{pts:[[0,s0],[T,sB]],color:COL.pos}],markers:[{x:t,y:s,color:COL.pos}]});
+  const vy=span([v]);
+  plot('gMruV',{xmax:T,ymin:vy[0],ymax:vy[1],ylabel:'v (m/s)',curves:[{pts:[[0,v],[T,v]],color:COL.v}],markers:[{x:t,y:v,color:COL.v}]});
+}
+
+/* ==================== MRUA ==================== */
+function mruaRender(t){
+  const v0=val('mruaV0'), a=val('mruaA'), T=10;
+  const s=v0*t+0.5*a*t*t, v=v0+a*t, vB=v0+a*T;
+  const N=48, sPts=[], sVals=[];
+  for(let i=0;i<=N;i++){ const tt=i/N*T, ss=v0*tt+0.5*a*tt*tt; sPts.push([tt,ss]); sVals.push(ss); }
+  let lo=Math.min(...sVals), hi=Math.max(...sVals);
+  if(hi-lo<8) hi=lo+8;
+  const pad=(hi-lo)*0.08+1;
+  drawTrack('svgMrua', s, v, lo-pad, hi+pad, {a:a});
+  setTxt('mruaTr',nf(t,1)); setTxt('mruaSr',nf(s,1)); setTxt('mruaVr',nf(v,1)); setTxt('mruaAr',nf(a,1));
+  const vy=span([v0,vB]);
+  plot('gMruaV',{xmax:T,ymin:vy[0],ymax:vy[1],ylabel:'v (m/s)',curves:[{pts:[[0,v0],[T,vB]],color:COL.v}],markers:[{x:t,y:v,color:COL.v}]});
+  const sy=span(sVals);
+  plot('gMruaS',{xmax:T,ymin:sy[0],ymax:sy[1],ylabel:'s (m)',curves:[{pts:sPts,color:COL.pos}],markers:[{x:t,y:s,color:COL.pos}]});
+}
+const simMru=makeSim({key:'mru',duration:()=>10,render:mruRender,params:['mruS0','mruV']});
+const simMrua=makeSim({key:'mrua',duration:()=>10,render:mruaRender,params:['mruaV0','mruaA']});
+
+/* ==================== CADUTA LIBERA / MOTO VERTICALE ==================== */
+let cadModeVal='free';
+function cadV0y(){ const v0=val('cadV0'); return cadModeVal==='up'?v0:cadModeVal==='down'?-v0:0; }
+function cadDur(){
+  const h0=val('cadH0'), v0y=cadV0y(), disc=v0y*v0y+2*G*h0;
+  if(disc<=0) return 0.05;
+  return (v0y+Math.sqrt(disc))/G;
+}
+function drawFall(svgId,y,v,h0,hmax){
+  const svg=document.getElementById(svgId); if(!svg) return;
+  const yG=272, top=22, cx=118;
+  const ymax=Math.max(h0,hmax,5)*1.12+2;
+  const PY=Y=>yG-(Y/ymax)*(yG-top);
+  let g='';
+  g+=`<line x1="18" y1="${yG}" x2="196" y2="${yG}" stroke="${COL.ground}" stroke-width="2"/>`;
+  for(let x=22;x<196;x+=13) g+=`<line x1="${x}" y1="${yG}" x2="${x-7}" y2="${yG+8}" stroke="#c2c9d6" stroke-width="1"/>`;
+  g+=`<line x1="48" y1="${top}" x2="48" y2="${yG}" stroke="#c7cede" stroke-width="1"/>`;
+  niceTicks(0,ymax,5).forEach(Y=>{ const yy=PY(Y);
+    g+=`<line x1="44" y1="${yy.toFixed(1)}" x2="48" y2="${yy.toFixed(1)}" stroke="#9aa3b2" stroke-width="1"/>`;
+    g+=`<text x="42" y="${(yy+3).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="end">${fmtTick(Y)}</text>`; });
+  g+=`<text x="18" y="${top-8}" font-size="9" fill="#6b7280">y (m)</text>`;
+  if(h0>0.01){ const yy=PY(h0);
+    g+=`<line x1="60" y1="${yy.toFixed(1)}" x2="150" y2="${yy.toFixed(1)}" stroke="#9aa3b2" stroke-width="1" stroke-dasharray="4 3"/>`;
+    g+=`<text x="153" y="${(yy+3).toFixed(1)}" font-size="9" fill="#6b7280">h₀</text>`; }
+  if(hmax>h0+0.05){ const yy=PY(hmax);
+    g+=`<line x1="60" y1="${yy.toFixed(1)}" x2="150" y2="${yy.toFixed(1)}" stroke="#c9b8e0" stroke-width="1" stroke-dasharray="2 3"/>`;
+    g+=`<text x="153" y="${(yy+3).toFixed(1)}" font-size="9" fill="#7b1fa2">max</text>`; }
+  const py=PY(Math.max(0,y));
+  g+=`<circle cx="${cx}" cy="${py.toFixed(1)}" r="9" fill="#dfe8f7" stroke="${COL.v}" stroke-width="2"/>`;
+  const lv=Math.min(58,Math.abs(v)*2.4);
+  if(lv>1) g+=arrow(cx,py,cx,py-Math.sign(v)*lv,COL.vy,'v');
+  g+=arrow(184,32,184,58,COL.a,'g');
+  svg.innerHTML=g;
+}
+function cadRender(t){
+  const h0=val('cadH0'), v0y=cadV0y(), T=cadDur();
+  let y=h0+v0y*t-0.5*G*t*t; if(y<0)y=0;
+  const v=v0y-G*t, hmax=h0+Math.max(0,v0y)*Math.max(0,v0y)/(2*G);
+  drawFall('svgCad', y, v, h0, hmax);
+  setTxt('cadTr',nf(t,1)); setTxt('cadYr',nf(y,1)); setTxt('cadVr',nf(v,1)); setTxt('cadHmax',nf(hmax,1));
+  const N=48,yPts=[],vPts=[],yVals=[];
+  for(let i=0;i<=N;i++){ const tt=i/N*T; let yy=h0+v0y*tt-0.5*G*tt*tt; if(yy<0)yy=0;
+    yPts.push([tt,yy]); yVals.push(yy); vPts.push([tt,v0y-G*tt]); }
+  plot('gCadY',{xmax:T,ymin:0,ymax:Math.max(...yVals,1)*1.12,ylabel:'y (m)',
+    curves:[{pts:yPts,color:COL.pos}],markers:[{x:t,y:Math.max(0,y),color:COL.pos}]});
+  const vsp=span([v0y,v0y-G*T]);
+  plot('gCadV',{xmax:T,ymin:vsp[0],ymax:vsp[1],ylabel:'v (m/s)',
+    curves:[{pts:vPts,color:COL.vy}],markers:[{x:t,y:v,color:COL.vy}]});
+}
+const simCad=makeSim({key:'cad',duration:cadDur,render:cadRender,params:['cadH0','cadV0']});
+document.querySelectorAll('#cadMode button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#cadMode button').forEach(x=>x.classList.toggle('active',x===b));
+  cadModeVal=b.dataset.mode;
+  const v0el=document.getElementById('cadV0');
+  if(cadModeVal==='free'){ v0el.value=0; v0el.disabled=true; }
+  else { v0el.disabled=false; if(+v0el.value===0) v0el.value=15; }
+  v0el.dispatchEvent(new Event('input'));
+  simCad.reset();
+}));
+
+/* ==================== MOTO PARABOLICO ==================== */
+let parOriz=false;
+function parGeom(){
+  const v0=val('parV0'), th=(parOriz?0:val('parAng')*Math.PI/180), h0=val('parH0');
+  const v0x=v0*Math.cos(th), v0y=v0*Math.sin(th);
+  const T=(v0y+Math.sqrt(v0y*v0y+2*G*h0))/G;
+  const R=v0x*T, H=h0+v0y*v0y/(2*G);
+  return {v0,th,h0,v0x,v0y,T,R,H};
+}
+function parRender(t){
+  const p=parGeom(), T=p.T, N=60;
+  const x=p.v0x*t; let y=p.h0+p.v0y*t-0.5*G*t*t; if(y<0)y=0;
+  const vx=p.v0x, vy=p.v0y-G*t;
+  const W=420,Hh=220,mL=36,mR=14,mT=14,mB=28;
+  const xmaxP=Math.max(p.R,1)*1.08, ymaxP=Math.max(p.H,1)*1.14;
+  const PX=X=>mL+X/xmaxP*(W-mL-mR), PY=Y=>Hh-mB-Y/ymaxP*(Hh-mT-mB);
+  let g='';
+  g+=`<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${(Hh-mB).toFixed(1)}" stroke="#c7cede" stroke-width="1"/>`;
+  g+=`<line x1="${mL}" y1="${PY(0).toFixed(1)}" x2="${W-mR}" y2="${PY(0).toFixed(1)}" stroke="${COL.ground}" stroke-width="2"/>`;
+  for(let xx=mL+5;xx<W-mR;xx+=14) g+=`<line x1="${xx}" y1="${PY(0).toFixed(1)}" x2="${xx-6}" y2="${(PY(0)+7).toFixed(1)}" stroke="#c2c9d6" stroke-width="1"/>`;
+  niceTicks(0,xmaxP,5).forEach(X=>{ if(X<=1e-9)return; const xx=PX(X);
+    g+=`<text x="${xx.toFixed(1)}" y="${(PY(0)+18).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="middle">${fmtTick(X)}</text>`; });
+  g+=`<text x="${W-mR}" y="${(PY(0)+18).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="end">x (m)</text>`;
+  niceTicks(0,ymaxP,4).forEach(Y=>{ if(Y<=1e-9)return; const yy=PY(Y);
+    g+=`<line x1="${mL-3}" y1="${yy.toFixed(1)}" x2="${mL}" y2="${yy.toFixed(1)}" stroke="#9aa3b2" stroke-width="1"/>`;
+    g+=`<text x="${mL-5}" y="${(yy+3).toFixed(1)}" font-size="9" fill="#6b7280" text-anchor="end">${fmtTick(Y)}</text>`; });
+  g+=`<text x="${mL-2}" y="${(mT-3).toFixed(1)}" font-size="9" fill="#6b7280">y (m)</text>`;
+  let d='';
+  for(let i=0;i<=N;i++){ const tt=i/N*T, xx=p.v0x*tt; let yy=p.h0+p.v0y*tt-0.5*G*tt*tt; if(yy<0)yy=0;
+    d+=`${i?'L':'M'}${PX(xx).toFixed(1)},${PY(yy).toFixed(1)} `; }
+  g+=`<path d="${d}" fill="none" stroke="${COL.traj}" stroke-width="1.6" stroke-dasharray="4 3" opacity=".7"/>`;
+  g+=`<circle cx="${PX(0).toFixed(1)}" cy="${PY(p.h0).toFixed(1)}" r="3" fill="${COL.traj}"/>`;
+  const px=PX(x), py=PY(y), sc=2.3;
+  if(Math.abs(vx)>0.1) g+=arrow(px,py,px+vx*sc,py,COL.vx,'vₓ');
+  if(Math.abs(vy)>0.1) g+=arrow(px,py,px,py-vy*sc,COL.vy,'vᵧ');
+  if(Math.hypot(vx,vy)>0.1) g+=arrow(px,py,px+vx*sc,py-vy*sc,COL.vtot,'');
+  g+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="6" fill="#dfe8f7" stroke="${COL.vtot}" stroke-width="2"/>`;
+  document.getElementById('svgPar').innerHTML=g;
+  setTxt('parTr',nf(t,1)); setTxt('parRr',nf(p.R,1)); setTxt('parHr',nf(p.H,1)); setTxt('parTv',nf(T,2));
+  setTxt('parVx',nf(p.v0x,1)); setTxt('parVy',nf(p.v0y,1));
+  const xPts=[],yPts=[],vxPts=[],vyPts=[];
+  for(let i=0;i<=N;i++){ const tt=i/N*T, xx=p.v0x*tt; let yy=p.h0+p.v0y*tt-0.5*G*tt*tt; if(yy<0)yy=0;
+    xPts.push([tt,xx]); yPts.push([tt,yy]); vxPts.push([tt,p.v0x]); vyPts.push([tt,p.v0y-G*tt]); }
+  plot('gParXY',{xmax:T,ymin:0,ymax:Math.max(p.R,p.H,1)*1.08,ylabel:'x,y (m)',
+    curves:[{pts:xPts,color:COL.vx},{pts:yPts,color:COL.vy}],
+    markers:[{x:t,y:x,color:COL.vx},{x:t,y:y,color:COL.vy}]});
+  const vsp=span([p.v0x,p.v0y,p.v0y-G*T]);
+  plot('gParV',{xmax:T,ymin:vsp[0],ymax:vsp[1],ylabel:'vₓ,vᵧ (m/s)',
+    curves:[{pts:vxPts,color:COL.vx},{pts:vyPts,color:COL.vy}],
+    markers:[{x:t,y:vx,color:COL.vx},{x:t,y:vy,color:COL.vy}]});
+}
+const simPar=makeSim({key:'par',duration:()=>parGeom().T,render:parRender,params:['parV0','parAng','parH0']});
+document.querySelectorAll('#parMode button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#parMode button').forEach(x=>x.classList.toggle('active',x===b));
+  const mode=b.dataset.mode, ang=document.getElementById('parAng'), h0=document.getElementById('parH0');
+  parOriz=(mode==='oriz');
+  if(parOriz){ ang.disabled=true; document.getElementById('parAngv').textContent='0° (orizzontale)'; if(+h0.value<5) h0.value=30; }
+  else { ang.disabled=false; if(+ang.value<5) ang.value=45; ang.dispatchEvent(new Event('input')); }
+  h0.dispatchEvent(new Event('input'));
+  simPar.reset();
+}));
+
+/* ==================== DATI ESERCIZI ==================== */
+const ESERCIZI={
+mru:[
+ {t:"Velocità da spazio e tempo",
+  p:"Un ciclista percorre 240 m in 30 s muovendosi a velocità costante. Calcola la sua velocità in m/s e in km/h.",
+  d:"Δs = 240 m · Δt = 30 s · v = ?",
+  s:["Nel MRU la velocità è v = Δs / Δt.",
+     "Per passare da m/s a km/h moltiplica per 3,6."],
+  st:[["Velocità in m/s","v = Δs / Δt = 240 / 30 = 8 m/s"],
+      ["Conversione in km/h","v = 8 · 3,6 = 28,8 km/h"]],
+  r:"v = 8 m/s = 28,8 km/h"},
+ {t:"Spazio percorso da velocità e tempo",
+  p:"Un'automobile viaggia in autostrada a velocità costante di 90 km/h per 12 s. Quanto spazio percorre?",
+  d:"v = 90 km/h · Δt = 12 s · Δs = ?",
+  s:["Prima converti la velocità in m/s dividendo per 3,6.",
+     "Poi ricava lo spazio dalla legge oraria: Δs = v · Δt."],
+  st:[["Velocità in m/s","v = 90 / 3,6 = 25 m/s"],
+      ["Spazio percorso","Δs = v · Δt = 25 · 12 = 300 m"]],
+  r:"Δs = 300 m"},
+ {t:"Tempo di percorrenza",
+  p:"Un treno viaggia a velocità costante di 108 km/h. Quanto tempo impiega a percorrere un tratto rettilineo di 4,5 km?",
+  d:"v = 108 km/h · Δs = 4,5 km = 4500 m · Δt = ?",
+  s:["Converti tutto nel Sistema Internazionale: km/h in m/s e km in m.",
+     "Dalla formula v = Δs / Δt ricava Δt = Δs / v."],
+  st:[["Conversioni","v = 108 / 3,6 = 30 m/s · Δs = 4500 m"],
+      ["Tempo","Δt = Δs / v = 4500 / 30 = 150 s"],
+      ["In minuti","150 s = 2 min e 30 s"]],
+  r:"Δt = 150 s (2 min 30 s)"},
+ {t:"Confronto tra velocità",
+  p:"Chi va più veloce: l'automobile A che viaggia a 72 km/h oppure il ciclista B che si muove a 22 m/s?",
+  d:"v_A = 72 km/h · v_B = 22 m/s",
+  s:["Non si possono confrontare grandezze in unità diverse: portale entrambe alla stessa unità.",
+     "Converti 72 km/h in m/s dividendo per 3,6."],
+  st:[["Velocità di A in m/s","v_A = 72 / 3,6 = 20 m/s"],
+      ["Confronto","v_B = 22 m/s > v_A = 20 m/s"]],
+  r:"È più veloce B (22 m/s contro 20 m/s)"},
+ {t:"Legge oraria: posizione e spostamento",
+  p:"Un punto materiale si muove secondo la legge oraria s = 5 + 3t (metri e secondi). Determina la posizione a t = 0 e a t = 6 s e lo spostamento in questo intervallo.",
+  d:"s = 5 + 3t · calcolare s(0), s(6), Δs",
+  s:["Confronta la legge data con la forma generale s = s₀ + v·t: riconosci s₀ e v.",
+     "Lo spostamento è Δs = s(6) − s(0)."],
+  st:[["Lettura dei parametri","s₀ = 5 m (posizione iniziale), v = 3 m/s"],
+      ["Posizioni","s(0) = 5 + 3·0 = 5 m · s(6) = 5 + 3·6 = 23 m"],
+      ["Spostamento","Δs = 23 − 5 = 18 m"]],
+  r:"s(0) = 5 m · s(6) = 23 m · Δs = 18 m"},
+ {t:"Incontro tra due mobili (versi opposti)",
+  p:"Due paesi A e B distano 300 km. Nello stesso istante da A parte un'auto a 80 km/h e da B un'altra a 70 km/h, che si muovono l'una incontro all'altra. Dopo quanto tempo si incontrano e a che distanza da A?",
+  d:"d = 300 km · v_A = 80 km/h · v_B = 70 km/h",
+  s:["Muovendosi in versi opposti, la distanza si riduce con la somma delle due velocità (velocità di avvicinamento).",
+     "Tempo d'incontro = distanza / velocità di avvicinamento.",
+     "La distanza da A è poi v_A · t."],
+  st:[["Velocità di avvicinamento","v_avv = 80 + 70 = 150 km/h"],
+      ["Tempo d'incontro","t = d / v_avv = 300 / 150 = 2 h"],
+      ["Distanza da A","s_A = v_A · t = 80 · 2 = 160 km"],
+      ["Verifica","s_B = 70 · 2 = 140 km · 160 + 140 = 300 km ✓"]],
+  r:"Si incontrano dopo 2 h, a 160 km da A"},
+ {t:"Inseguimento (stesso verso)",
+  p:"Un'automobile viaggia a 20 m/s e ha 100 m di vantaggio su una moto, che nello stesso istante parte a 30 m/s nello stesso verso. Dopo quanto tempo la moto raggiunge l'auto?",
+  d:"v_auto = 20 m/s · v_moto = 30 m/s · vantaggio = 100 m",
+  s:["Nello stesso verso, la moto recupera il distacco con la differenza delle velocità.",
+     "Tempo = distacco / velocità di avvicinamento (differenza)."],
+  st:[["Velocità di recupero","Δv = 30 − 20 = 10 m/s"],
+      ["Tempo di raggiungimento","t = 100 / 10 = 10 s"],
+      ["Verifica delle posizioni","moto: 30·10 = 300 m · auto: 100 + 20·10 = 300 m ✓"]],
+  r:"La moto raggiunge l'auto dopo 10 s (a 300 m)"},
+ {t:"Velocità media su due tratti",
+  p:"Un'auto percorre 100 km alla velocità costante di 100 km/h, poi altri 100 km a 50 km/h. Qual è la velocità media sull'intero viaggio? (Attenzione: non è la media delle due velocità!)",
+  d:"tratto 1: 100 km a 100 km/h · tratto 2: 100 km a 50 km/h",
+  s:["La velocità media è sempre spazio totale diviso tempo totale, mai la media delle velocità.",
+     "Calcola separatamente il tempo di ciascun tratto: t = spazio / velocità.",
+     "Somma spazi e tempi, poi dividi."],
+  st:[["Tempi dei due tratti","t₁ = 100 / 100 = 1 h · t₂ = 100 / 50 = 2 h"],
+      ["Totali","spazio = 200 km · tempo = 1 + 2 = 3 h"],
+      ["Velocità media","v_media = 200 / 3 ≈ 66,7 km/h"],
+      ["Osservazione","La media aritmetica darebbe 75 km/h: è sbagliata perché si viaggia più a lungo alla velocità bassa."]],
+  r:"v_media ≈ 66,7 km/h (non 75 km/h)"}
+],
+mrua:[
+ {t:"Velocità finale partendo da fermo",
+  p:"Un'automobile parte da ferma e accelera uniformemente con a = 2,5 m/s² per 8 s. Quale velocità raggiunge (in m/s e km/h)?",
+  d:"v₀ = 0 · a = 2,5 m/s² · t = 8 s",
+  s:["Usa la legge della velocità v = v₀ + a·t, con v₀ = 0.",
+     "Poi converti in km/h moltiplicando per 3,6."],
+  st:[["Velocità finale","v = 0 + 2,5 · 8 = 20 m/s"],
+      ["In km/h","v = 20 · 3,6 = 72 km/h"]],
+  r:"v = 20 m/s = 72 km/h"},
+ {t:"Spazio percorso partendo da fermo",
+  p:"La stessa automobile (parte da ferma, a = 2,5 m/s²) quanto spazio percorre negli 8 s di accelerazione?",
+  d:"v₀ = 0 · a = 2,5 m/s² · t = 8 s",
+  s:["Con v₀ = 0 la legge oraria si riduce a s = ½·a·t².",
+     "Attenzione a elevare al quadrato il tempo."],
+  st:[["Legge oraria","s = ½ · a · t² = ½ · 2,5 · 8²"],
+      ["Calcolo","s = ½ · 2,5 · 64 = 80 m"]],
+  r:"s = 80 m"},
+ {t:"Calcolo dell'accelerazione",
+  p:"Un'auto passa da ferma a 90 km/h in 5 s. Calcola l'accelerazione e lo spazio percorso in questo tempo.",
+  d:"v₀ = 0 · v = 90 km/h · t = 5 s",
+  s:["Converti prima la velocità finale in m/s.",
+     "L'accelerazione è a = Δv / Δt.",
+     "Lo spazio, partendo da fermo, è s = ½·a·t²."],
+  st:[["Velocità finale","v = 90 / 3,6 = 25 m/s"],
+      ["Accelerazione","a = (25 − 0) / 5 = 5 m/s²"],
+      ["Spazio","s = ½ · 5 · 5² = ½ · 5 · 25 = 62,5 m"]],
+  r:"a = 5 m/s² · s = 62,5 m"},
+ {t:"Frenata: tempo e spazio di arresto",
+  p:"Un'automobile viaggia a 20 m/s e frena con decelerazione costante di modulo 4 m/s² fino a fermarsi. Calcola il tempo di arresto e lo spazio di frenata.",
+  d:"v₀ = 20 m/s · a = −4 m/s² · v = 0",
+  s:["Frenare significa accelerazione opposta al moto: prendi a negativa.",
+     "Il tempo si trova da v = v₀ + a·t imponendo v = 0.",
+     "Lo spazio conviene ricavarlo con Torricelli: v² = v₀² + 2·a·s."],
+  st:[["Tempo di arresto","0 = 20 − 4·t ⇒ t = 20 / 4 = 5 s"],
+      ["Spazio di frenata (Torricelli)","0 = 20² − 2·4·s ⇒ s = 400 / 8 = 50 m"]],
+  r:"t = 5 s · spazio di frenata = 50 m"},
+ {t:"Equazione di Torricelli",
+  p:"Un corpo parte da fermo con accelerazione costante a = 3 m/s². Quale velocità ha dopo aver percorso 24 m?",
+  d:"v₀ = 0 · a = 3 m/s² · s = 24 m · v = ?",
+  s:["Qui non conosci il tempo: usa la formula senza tempo v² = v₀² + 2·a·s.",
+     "Con v₀ = 0 diventa v = √(2·a·s)."],
+  st:[["Torricelli","v² = 0 + 2 · 3 · 24 = 144"],
+      ["Velocità","v = √144 = 12 m/s"]],
+  r:"v = 12 m/s"},
+ {t:"Moto con velocità iniziale",
+  p:"Un corpo si muove con velocità iniziale v₀ = 4 m/s e accelerazione costante a = 2 m/s². Partendo da s₀ = 0, calcola posizione e velocità dopo 6 s.",
+  d:"v₀ = 4 m/s · a = 2 m/s² · t = 6 s",
+  s:["Per la posizione usa la legge completa s = v₀·t + ½·a·t².",
+     "Per la velocità usa v = v₀ + a·t."],
+  st:[["Posizione","s = 4·6 + ½·2·6² = 24 + 36 = 60 m"],
+      ["Velocità","v = 4 + 2·6 = 16 m/s"]],
+  r:"s = 60 m · v = 16 m/s"},
+ {t:"Legge dei numeri dispari",
+  p:"Un treno parte da fermo con accelerazione costante a = 0,5 m/s². Quanto spazio percorre durante il 10° secondo (cioè fra t = 9 s e t = 10 s)?",
+  d:"v₀ = 0 · a = 0,5 m/s²",
+  s:["Calcola lo spazio totale a t = 10 s e a t = 9 s, poi fai la differenza.",
+     "Usa s = ½·a·t² per entrambi gli istanti."],
+  st:[["Spazio a 10 s","s(10) = ½·0,5·10² = 25 m"],
+      ["Spazio a 9 s","s(9) = ½·0,5·9² = 20,25 m"],
+      ["Spazio nel 10° secondo","Δs = 25 − 20,25 = 4,75 m"],
+      ["Nota","Corrisponde alla legge di Galileo: gli spazi nei secondi successivi stanno come 1 : 3 : 5 : 7 …"]],
+  r:"Δs = 4,75 m nel 10° secondo"},
+ {t:"Accelerazione da una velocità iniziale",
+  p:"Un motociclista viaggia a 10 m/s e accelera uniformemente a 2 m/s². Quanto tempo e quanto spazio gli servono per raggiungere 30 m/s?",
+  d:"v₀ = 10 m/s · a = 2 m/s² · v = 30 m/s",
+  s:["Il tempo si ricava da v = v₀ + a·t.",
+     "Lo spazio conviene ricavarlo con Torricelli: s = (v² − v₀²) / (2·a)."],
+  st:[["Tempo","30 = 10 + 2·t ⇒ t = 20 / 2 = 10 s"],
+      ["Spazio (Torricelli)","s = (30² − 10²) / (2·2) = (900 − 100) / 4 = 200 m"]],
+  r:"t = 10 s · s = 200 m"}
+],
+caduta:[
+ {t:"Tempo di caduta e velocità d'impatto",
+  p:"Un sasso viene lasciato cadere (senza velocità iniziale) da un'altezza di 20 m. Trascurando l'aria, calcola il tempo di caduta e la velocità con cui arriva a terra. (g = 9,81 m/s²)",
+  d:"h = 20 m · v₀ = 0 · g = 9,81 m/s²",
+  s:["È una caduta libera da fermo: prendi positivo il verso verso il basso, a = g.",
+     "Il tempo si ricava da h = ½·g·t² ⇒ t = √(2h/g).",
+     "La velocità d'impatto: v = g·t oppure v = √(2·g·h)."],
+  st:[["Tempo di caduta","t = √(2·20 / 9,81) = √4,08 ≈ 2,02 s"],
+      ["Velocità d'impatto","v = √(2 · 9,81 · 20) = √392,4 ≈ 19,8 m/s"]],
+  r:"t ≈ 2,02 s · v ≈ 19,8 m/s"},
+ {t:"Velocità e spazio dopo un tempo dato",
+  p:"Una biglia è lasciata cadere da ferma. Quale velocità ha dopo 3 s e quanto spazio ha percorso? (g = 9,81 m/s²)",
+  d:"v₀ = 0 · t = 3 s · g = 9,81 m/s²",
+  s:["Il moto è un MRUA con a = g: usa v = g·t e h = ½·g·t².",
+     "Ricorda di elevare al quadrato il tempo per lo spazio."],
+  st:[["Velocità","v = g·t = 9,81 · 3 = 29,4 m/s"],
+      ["Spazio percorso","h = ½ · 9,81 · 3² = ½ · 9,81 · 9 = 44,1 m"]],
+  r:"v = 29,4 m/s · h = 44,1 m"},
+ {t:"Altezza dedotta dal tempo di caduta",
+  p:"Un oggetto lasciato cadere impiega 2,5 s per toccare il suolo. Da quale altezza è caduto e con quale velocità arriva a terra? (g = 9,81 m/s²)",
+  d:"t = 2,5 s · v₀ = 0 · g = 9,81 m/s²",
+  s:["L'altezza si ricava da h = ½·g·t².",
+     "La velocità finale da v = g·t."],
+  st:[["Altezza","h = ½ · 9,81 · 2,5² = ½ · 9,81 · 6,25 ≈ 30,7 m"],
+      ["Velocità d'impatto","v = 9,81 · 2,5 ≈ 24,5 m/s"]],
+  r:"h ≈ 30,7 m · v ≈ 24,5 m/s"},
+ {t:"Lancio verso l'alto: altezza massima",
+  p:"Una palla è lanciata verticalmente verso l'alto con velocità iniziale di 20 m/s. Calcola l'altezza massima raggiunta e il tempo di salita. (g = 9,81 m/s²)",
+  d:"v₀ = 20 m/s (verso l'alto) · g = 9,81 m/s²",
+  s:["Nel punto più alto la velocità è nulla (v = 0): il corpo si ferma un istante.",
+     "Tempo di salita: da v = v₀ − g·t con v = 0 ⇒ t = v₀/g.",
+     "Altezza massima: h_max = v₀² / (2g)."],
+  st:[["Tempo di salita","t = v₀ / g = 20 / 9,81 ≈ 2,04 s"],
+      ["Altezza massima","h_max = 20² / (2·9,81) = 400 / 19,62 ≈ 20,4 m"]],
+  r:"h_max ≈ 20,4 m · t_salita ≈ 2,04 s"},
+ {t:"Lancio verso l'alto: tempo di volo",
+  p:"La stessa palla lanciata a 20 m/s verso l'alto: dopo quanto tempo ritorna al punto di partenza e con quale velocità? (g = 9,81 m/s²)",
+  d:"v₀ = 20 m/s · g = 9,81 m/s²",
+  s:["Per la simmetria del moto, il tempo di volo è il doppio del tempo di salita.",
+     "Alla stessa quota il corpo ripassa con velocità uguale in modulo ma di verso opposto."],
+  st:[["Tempo di volo","t_volo = 2·v₀/g = 2·20/9,81 ≈ 4,08 s"],
+      ["Velocità di ritorno","v = 20 m/s diretta verso il basso (−20 m/s)"]],
+  r:"t_volo ≈ 4,08 s · v = 20 m/s verso il basso"},
+ {t:"Velocità a una quota data (Torricelli)",
+  p:"Una palla è lanciata verso l'alto a 15 m/s. Con quale velocità passa per la quota di 5 m? (g = 9,81 m/s²)",
+  d:"v₀ = 15 m/s · y = 5 m · g = 9,81 m/s²",
+  s:["Usa la relazione senza tempo in verticale: v² = v₀² − 2·g·y.",
+     "Il risultato ha due segni: il corpo passa a 5 m due volte (salita e discesa)."],
+  st:[["Torricelli verticale","v² = 15² − 2·9,81·5 = 225 − 98,1 = 126,9"],
+      ["Velocità","v = √126,9 ≈ 11,3 m/s"],
+      ["Interpretazione","+11,3 m/s in salita, −11,3 m/s in discesa (stesso modulo)"]],
+  r:"v ≈ 11,3 m/s (in salita e in discesa)"},
+ {t:"Lancio verso il basso",
+  p:"Da un balcone alto 25 m un sasso è lanciato verso il basso con velocità iniziale di 8 m/s. Dopo quanto tempo tocca terra e con quale velocità? (g = 9,81 m/s²)",
+  d:"h = 25 m · v₀ = 8 m/s (verso il basso) · g = 9,81 m/s²",
+  s:["Prendi positivo il verso verso il basso: allora a = +g e v₀ = +8 m/s.",
+     "La legge oraria è h = v₀·t + ½·g·t²: diventa un'equazione di 2° grado in t.",
+     "Risolvi e tieni la soluzione positiva; poi v = v₀ + g·t."],
+  st:[["Equazione del moto","25 = 8·t + ½·9,81·t² ⇒ 4,905·t² + 8·t − 25 = 0"],
+      ["Soluzione positiva","t = (−8 + √(64 + 490,5)) / 9,81 = (−8 + 23,55)/9,81 ≈ 1,59 s"],
+      ["Velocità d'impatto","v = 8 + 9,81·1,59 ≈ 23,6 m/s"]],
+  r:"t ≈ 1,59 s · v ≈ 23,6 m/s"},
+ {t:"Indipendenza dalla massa",
+  p:"Due sfere di 1 kg e 5 kg vengono lasciate cadere insieme da 45 m nel vuoto. Quale arriva prima e con quale velocità toccano terra? (g = 9,81 m/s²)",
+  d:"h = 45 m · m₁ = 1 kg · m₂ = 5 kg · nel vuoto",
+  s:["Nella caduta libera l'accelerazione è g per tutti i corpi: la massa non compare nelle formule.",
+     "Calcola un solo tempo e una sola velocità: valgono per entrambe."],
+  st:[["Tempo di caduta","t = √(2·45/9,81) = √9,17 ≈ 3,03 s (uguale per entrambe)"],
+      ["Velocità d'impatto","v = √(2·9,81·45) = √882,9 ≈ 29,7 m/s (uguale per entrambe)"],
+      ["Conclusione","Arrivano insieme: la massa non influisce sulla caduta (Galileo)."]],
+  r:"Arrivano insieme: t ≈ 3,03 s · v ≈ 29,7 m/s"}
+],
+parab:[
+ {t:"Lancio orizzontale da un tavolo",
+  p:"Una biglia rotola via da un tavolo alto 1,25 m con velocità orizzontale di 3 m/s. Dopo quanto tempo tocca il pavimento e a che distanza dal bordo del tavolo cade? (g = 9,81 m/s²)",
+  d:"h = 1,25 m · v₀ = 3 m/s (orizzontale) · g = 9,81 m/s²",
+  s:["Il moto verticale è una caduta libera: il tempo dipende solo dall'altezza, non da v₀.",
+     "Tempo di volo: t = √(2h/g).",
+     "La distanza orizzontale (gittata) è x = v₀·t, perché in orizzontale il moto è uniforme."],
+  st:[["Tempo di volo","t = √(2·1,25 / 9,81) = √0,255 ≈ 0,505 s"],
+      ["Gittata","x = v₀·t = 3 · 0,505 ≈ 1,51 m"]],
+  r:"t ≈ 0,505 s · gittata ≈ 1,51 m"},
+ {t:"Lancio orizzontale: ricavare la velocità",
+  p:"Un aereo vola orizzontalmente a 80 m di quota e sgancia un pacco che tocca terra a 120 m (in orizzontale) dal punto di sgancio. Qual era la velocità dell'aereo? (g = 9,81 m/s²)",
+  d:"h = 80 m · gittata = 120 m · g = 9,81 m/s²",
+  s:["Trova prima il tempo di volo dalla caduta verticale: t = √(2h/g).",
+     "Poi ricava la velocità da gittata = v₀·t ⇒ v₀ = gittata / t."],
+  st:[["Tempo di volo","t = √(2·80 / 9,81) = √16,31 ≈ 4,04 s"],
+      ["Velocità dell'aereo","v₀ = 120 / 4,04 ≈ 29,7 m/s ≈ 107 km/h"]],
+  r:"v₀ ≈ 29,7 m/s (≈ 107 km/h)"},
+ {t:"Scomposizione della velocità iniziale",
+  p:"Un proiettile è lanciato con velocità di 25 m/s a un angolo di 37° sull'orizzontale. Calcola le componenti orizzontale e verticale della velocità iniziale. (cos 37° ≈ 0,80 · sin 37° ≈ 0,60)",
+  d:"v₀ = 25 m/s · θ = 37°",
+  s:["La componente orizzontale è v₀ₓ = v₀·cos θ.",
+     "La componente verticale è v₀ᵧ = v₀·sin θ."],
+  st:[["Componente orizzontale","v₀ₓ = 25 · cos 37° = 25 · 0,80 = 20 m/s"],
+      ["Componente verticale","v₀ᵧ = 25 · sin 37° = 25 · 0,60 = 15 m/s"]],
+  r:"v₀ₓ = 20 m/s · v₀ᵧ = 15 m/s"},
+ {t:"Gittata di un lancio obliquo",
+  p:"Un pallone è calciato dal suolo a 20 m/s con un angolo di 30°. Calcola la gittata (distanza a cui ricade). (g = 9,81 m/s²)",
+  d:"v₀ = 20 m/s · θ = 30° · g = 9,81 m/s²",
+  s:["Usa direttamente la formula della gittata: R = v₀²·sin(2θ) / g.",
+     "Attenzione: l'angolo da raddoppiare è 2θ = 60°, sin 60° ≈ 0,866."],
+  st:[["Formula della gittata","R = v₀² · sin(2θ) / g = 20² · sin 60° / 9,81"],
+      ["Calcolo","R = 400 · 0,866 / 9,81 = 346,4 / 9,81 ≈ 35,3 m"]],
+  r:"R ≈ 35,3 m"},
+ {t:"Altezza massima e tempo di volo",
+  p:"Il proiettile dell'esercizio 3 (v₀ₓ = 20 m/s, v₀ᵧ = 15 m/s) percorre una parabola. Calcola l'altezza massima, il tempo di volo e la gittata. (g = 9,81 m/s²)",
+  d:"v₀ₓ = 20 m/s · v₀ᵧ = 15 m/s · g = 9,81 m/s²",
+  s:["L'altezza massima dipende solo dal moto verticale: h_max = v₀ᵧ² / (2g).",
+     "Il tempo di volo è t = 2·v₀ᵧ / g (sale e riscende).",
+     "La gittata è R = v₀ₓ · t (moto orizzontale uniforme)."],
+  st:[["Altezza massima","h_max = 15² / (2·9,81) = 225 / 19,62 ≈ 11,5 m"],
+      ["Tempo di volo","t = 2·15 / 9,81 ≈ 3,06 s"],
+      ["Gittata","R = 20 · 3,06 ≈ 61,2 m"]],
+  r:"h_max ≈ 11,5 m · t ≈ 3,06 s · R ≈ 61,2 m"},
+ {t:"Gittata massima",
+  p:"Con quale angolo di lancio si ottiene la gittata massima e quanto vale, per una velocità iniziale di 30 m/s? (g = 9,81 m/s²)",
+  d:"v₀ = 30 m/s · g = 9,81 m/s²",
+  s:["La gittata R = v₀²·sin(2θ)/g è massima quando sin(2θ) = 1, cioè 2θ = 90°.",
+     "Da 2θ = 90° segue θ = 45°; allora R_max = v₀²/g."],
+  st:[["Angolo ottimale","2θ = 90° ⇒ θ = 45°"],
+      ["Gittata massima","R_max = v₀² / g = 30² / 9,81 = 900 / 9,81 ≈ 91,7 m"]],
+  r:"θ = 45° · R_max ≈ 91,7 m"},
+ {t:"Angoli complementari",
+  p:"Mostra che, a parità di velocità iniziale (v₀ = 20 m/s), i lanci a 30° e a 60° hanno la stessa gittata. (g = 9,81 m/s²)",
+  d:"v₀ = 20 m/s · θ₁ = 30° · θ₂ = 60°",
+  s:["Calcola la gittata nei due casi con R = v₀²·sin(2θ)/g.",
+     "Confronta sin(60°) e sin(120°): sono uguali."],
+  st:[["Gittata a 30°","R = 400 · sin 60° / 9,81 = 400 · 0,866 / 9,81 ≈ 35,3 m"],
+      ["Gittata a 60°","R = 400 · sin 120° / 9,81 = 400 · 0,866 / 9,81 ≈ 35,3 m"],
+      ["Conclusione","Angoli complementari (la cui somma è 90°) danno la stessa gittata."]],
+  r:"Uguale gittata ≈ 35,3 m in entrambi i casi"},
+ {t:"Velocità nel punto più alto",
+  p:"Un proiettile è lanciato a 40 m/s con angolo di 60°. Qual è la sua velocità (modulo e direzione) nel punto più alto della traiettoria? (cos 60° = 0,5 · sin 60° ≈ 0,866)",
+  d:"v₀ = 40 m/s · θ = 60°",
+  s:["Nel punto più alto la componente verticale della velocità si annulla (v_y = 0).",
+     "Resta solo la componente orizzontale, che è costante per tutto il volo: v_x = v₀·cos θ."],
+  st:[["Componente orizzontale (costante)","v_x = 40 · cos 60° = 40 · 0,5 = 20 m/s"],
+      ["Componente verticale nel punto più alto","v_y = 0"],
+      ["Velocità nel punto più alto","v = 20 m/s, orizzontale"]],
+  r:"v = 20 m/s, diretta orizzontalmente"}
+]
+};
+
+/* ==================== RENDER ESERCIZI (suggerimenti progressivi) ==================== */
+function renderEsercizi(sec){
+  const el=document.getElementById('ex-'+sec), list=ESERCIZI[sec];
+  if(!el||!list) return;
+  let html='<p class="eserc-intro">Prova a risolvere da solo. Se ti blocchi, chiedi un suggerimento alla volta: la soluzione completa resta disponibile in fondo.</p>';
+  list.forEach((e,i)=>{
+    html+=`<div class="esercizio" data-ex="${i}">
+      <h3>Esercizio ${i+1} — ${e.t}</h3>
+      <p class="testo">${e.p}</p>
+      <div class="dati"><b>Dati:</b> ${e.d}</div>
+      <div class="hints"></div>
+      <div class="sol"></div>
+      <div class="ex-actions">
+        <button class="ex-btn hint-btn">Mostra suggerimento</button>
+        <button class="ex-btn sol sol-btn">Mostra soluzione</button>
+        <span class="ex-count"></span>
+      </div>
+    </div>`;
+  });
+  el.innerHTML=html;
+  el.querySelectorAll('.esercizio').forEach(card=>{
+    const e=list[+card.dataset.ex];
+    const hintsEl=card.querySelector('.hints'), solEl=card.querySelector('.sol');
+    const hintBtn=card.querySelector('.hint-btn'), solBtn=card.querySelector('.sol-btn');
+    const cnt=card.querySelector('.ex-count');
+    let shown=0;
+    const upd=()=>{
+      const tot=e.s.length;
+      cnt.textContent=shown>0?`suggerimento ${shown} di ${tot}`:`${tot} suggerimenti disponibili`;
+      if(shown>=tot){ hintBtn.disabled=true; hintBtn.style.opacity=.45; hintBtn.style.cursor='default';
+        hintBtn.textContent='Nessun altro suggerimento'; }
+      else if(shown>0) hintBtn.textContent='Suggerimento successivo';
+    };
+    upd();
+    hintBtn.addEventListener('click',()=>{
+      if(shown>=e.s.length) return;
+      const d=document.createElement('div'); d.className='ex-hint';
+      d.innerHTML=`<span class="h-lab">Suggerimento ${shown+1}</span>${e.s[shown]}`;
+      hintsEl.appendChild(d); shown++; upd();
+    });
+    solBtn.addEventListener('click',()=>{
+      if(solEl.innerHTML) return;
+      let h='<div class="ex-sol">';
+      e.st.forEach(p=>{ h+=`<div class="step"><div class="step-t">${p[0]}</div><div class="step-b">${p[1]}</div></div>`; });
+      h+=`<div class="risultato">${e.r}</div></div>`;
+      solEl.innerHTML=h;
+      solBtn.disabled=true; solBtn.style.opacity=.45; solBtn.style.cursor='default'; solBtn.textContent='Soluzione mostrata';
+    });
+  });
+}
+
+/* ==================== DATI QUIZ ==================== */
+const QUIZZES={
+mru:[
+ {q:"Nel moto rettilineo uniforme (MRU) l'accelerazione è:",
+  opts:["uguale a g","costante e positiva","nulla","uguale alla velocità"],ans:2,
+  exp:"Se la velocità è costante, la sua variazione è zero: a = Δv/Δt = 0."},
+ {q:"Qual è la legge oraria del MRU?",
+  opts:["s = ½ a t²","s = s₀ + v · t","v = v₀ + a t","s = v / t"],ans:1,
+  exp:"Nel MRU la posizione cresce linearmente col tempo: s = s₀ + v·t."},
+ {q:"Nel grafico spazio–tempo (s–t) di un MRU, la pendenza della retta rappresenta:",
+  opts:["l'accelerazione","la velocità","lo spazio percorso","il tempo"],ans:1,
+  exp:"La pendenza del grafico s–t è la velocità: più è ripido, più il moto è veloce."},
+ {q:"Nel grafico velocità–tempo (v–t) del MRU la linea è:",
+  opts:["una retta orizzontale","una retta inclinata","una parabola","una circonferenza"],ans:0,
+  exp:"La velocità è costante, quindi il grafico v–t è orizzontale. L'area sotto di essa è lo spostamento."},
+ {q:"A quanti m/s corrispondono 72 km/h?",
+  opts:["7,2 m/s","20 m/s","25 m/s","200 m/s"],ans:1,
+  exp:"Si divide per 3,6: 72 / 3,6 = 20 m/s."},
+ {q:"Un'automobile viaggia a 15 m/s costanti. Quanto spazio percorre in 10 s?",
+  opts:["1,5 m","25 m","150 m","0,67 m"],ans:2,
+  exp:"Δs = v·t = 15 · 10 = 150 m."},
+ {q:"Un ciclista percorre 100 m in 20 s a velocità costante. Qual è la sua velocità?",
+  opts:["2 m/s","5 m/s","0,2 m/s","2000 m/s"],ans:1,
+  exp:"v = Δs/Δt = 100 / 20 = 5 m/s."},
+ {q:"Un punto si muove secondo la legge s = 10 − 2t (m, s). Come si muove?",
+  opts:["è fermo nel punto s = 10 m","avanza a 2 m/s verso posizioni crescenti","si muove a 2 m/s verso posizioni decrescenti (torna indietro)","accelera nel tempo"],ans:2,
+  exp:"Confrontando con s = s₀ + v·t si ha s₀ = 10 m e v = −2 m/s: verso negativo, velocità costante."},
+ {q:"Due automobili viaggiano nello stesso verso alla stessa velocità costante. La distanza tra loro:",
+  opts:["aumenta","diminuisce","resta costante","si annulla"],ans:2,
+  exp:"Percorrono spazi uguali negli stessi tempi, quindi la distanza non cambia."},
+ {q:"Come si calcola la velocità media di un intero viaggio?",
+  opts:["media delle velocità dei tratti","spazio totale diviso tempo totale","la velocità massima raggiunta","(v₀ + v) / 2"],ans:1,
+  exp:"La velocità media è sempre spazio totale / tempo totale, non la media delle velocità."}
+],
+mrua:[
+ {q:"Nel moto rettilineo uniformemente accelerato (MRUA) è costante:",
+  opts:["la velocità","l'accelerazione","la posizione","lo spazio percorso in tempi uguali"],ans:1,
+  exp:"Per definizione l'accelerazione è costante; la velocità cambia in modo uniforme."},
+ {q:"Come varia la velocità nel MRUA?",
+  opts:["v = v₀ + a · t","v = s / t","v = ½ a t²","v = costante"],ans:0,
+  exp:"La velocità cresce (o cala) linearmente nel tempo: v = v₀ + a·t."},
+ {q:"Qual è la legge oraria (posizione) del MRUA?",
+  opts:["s = s₀ + v · t","s = s₀ + v₀ · t + ½ · a · t²","s = v₀ + a · t","s = ½ v t"],ans:1,
+  exp:"La posizione ha un termine quadratico nel tempo: s = s₀ + v₀t + ½at²."},
+ {q:"Nel grafico velocità–tempo (v–t) del MRUA, la pendenza della retta è:",
+  opts:["la velocità","lo spazio percorso","l'accelerazione","il tempo"],ans:2,
+  exp:"La pendenza del grafico v–t è l'accelerazione; l'area sotto la retta è lo spostamento."},
+ {q:"Il grafico spazio–tempo (s–t) di un MRUA è:",
+  opts:["una retta","un arco di parabola","una retta orizzontale","una circonferenza"],ans:1,
+  exp:"Per il termine ½at² la posizione descrive una parabola nel tempo."},
+ {q:"Quale relazione lega velocità e spazio senza usare il tempo (equazione di Torricelli)?",
+  opts:["v² = v₀² + 2 · a · Δs","v = v₀ + a t","s = ½ a t²","a = Δv / Δt"],ans:0,
+  exp:"v² = v₀² + 2aΔs è utile quando il tempo non è noto."},
+ {q:"Un corpo parte da fermo con a = 4 m/s². Quale velocità ha dopo 3 s?",
+  opts:["12 m/s","1,3 m/s","7 m/s","36 m/s"],ans:0,
+  exp:"v = v₀ + a·t = 0 + 4·3 = 12 m/s."},
+ {q:"Un corpo parte da fermo con a = 2 m/s². Quanto spazio percorre in 5 s?",
+  opts:["10 m","25 m","50 m","5 m"],ans:1,
+  exp:"s = ½·a·t² = ½·2·25 = 25 m."},
+ {q:"Un moto rettilineo rallenta (decelera) quando:",
+  opts:["l'accelerazione è nulla","accelerazione e velocità hanno lo stesso verso","accelerazione e velocità hanno verso opposto","la velocità è negativa"],ans:2,
+  exp:"Il moto rallenta se a è opposta a v (segni discordi), non semplicemente se a è negativa."},
+ {q:"Un'auto a 20 m/s frena con decelerazione di 5 m/s². In quanto tempo si ferma?",
+  opts:["4 s","100 s","0,25 s","15 s"],ans:0,
+  exp:"Da 0 = 20 − 5·t si ricava t = 20/5 = 4 s."}
+],
+caduta:[
+ {q:"L'accelerazione di gravità g vale circa:",
+  opts:["9,81 m/s","9,81 m/s²","981 m/s²","1 m/s²"],ans:1,
+  exp:"g ≈ 9,81 m/s²: è un'accelerazione, quindi si misura in m/s²."},
+ {q:"Nel vuoto, due corpi di massa diversa lasciati cadere dalla stessa altezza:",
+  opts:["arriva prima il più pesante","arriva prima il più leggero","arrivano insieme","dipende dalla forma"],ans:2,
+  exp:"L'accelerazione di caduta è g per tutti: la massa non compare. È la scoperta di Galileo."},
+ {q:"Un corpo è lasciato cadere da fermo. Dopo 2 s la sua velocità è (g = 9,81 m/s²):",
+  opts:["4,9 m/s","9,81 m/s","19,6 m/s","2 m/s"],ans:2,
+  exp:"v = g·t = 9,81 · 2 ≈ 19,6 m/s."},
+ {q:"Qual è il tempo di caduta da un'altezza h partendo da fermo?",
+  opts:["t = √(2h/g)","t = 2h/g","t = h/g","t = √(h·g)"],ans:0,
+  exp:"Da h = ½g t² si ricava t = √(2h/g)."},
+ {q:"Un corpo lanciato verso l'alto, nel punto più alto della traiettoria ha:",
+  opts:["velocità massima","velocità nulla e accelerazione g verso il basso","velocità e accelerazione entrambe nulle","accelerazione nulla"],ans:1,
+  exp:"La velocità si annulla un istante, ma l'accelerazione resta g verso il basso: per questo ricade."},
+ {q:"In un lancio verticale verso l'alto, il tempo di salita rispetto al tempo di discesa (fino alla quota di partenza) è:",
+  opts:["maggiore","minore","uguale","dipende dalla massa"],ans:2,
+  exp:"Il moto è simmetrico: tempo di salita = tempo di discesa."},
+ {q:"Una palla è lanciata verso l'alto a 30 m/s. Quale altezza massima raggiunge? (g ≈ 9,81 m/s²)",
+  opts:["30 m","45,9 m","60 m","15 m"],ans:1,
+  exp:"h_max = v₀²/(2g) = 900/19,62 ≈ 45,9 m."},
+ {q:"Durante la caduta libera, l'accelerazione del corpo:",
+  opts:["aumenta col tempo","diminuisce col tempo","resta costante e pari a g","è nulla"],ans:2,
+  exp:"L'accelerazione di gravità è costante: è la velocità che aumenta, non l'accelerazione."},
+ {q:"Un sasso cade da fermo da 45 m. Il tempo di caduta è circa (g ≈ 9,81 m/s²):",
+  opts:["1,5 s","3 s","9 s","4,5 s"],ans:1,
+  exp:"t = √(2·45/9,81) = √9,17 ≈ 3,0 s."},
+ {q:"Nel punto più alto di un lancio verticale, perché il corpo ricomincia a scendere?",
+  opts:["perché la sua velocità è nulla","perché la gravità continua ad agire verso il basso","perché è finita la spinta iniziale","perché g cambia verso"],ans:1,
+  exp:"L'accelerazione di gravità agisce sempre verso il basso: continua a variare la velocità anche quando è momentaneamente nulla."}
+],
+parab:[
+ {q:"Il moto parabolico è la composizione di:",
+  opts:["due moti uniformi","un moto uniforme (orizzontale) e uno uniformemente accelerato (verticale)","due moti accelerati","un moto circolare e uno rettilineo"],ans:1,
+  exp:"Orizzontalmente è un MRU (v_x costante), verticalmente una caduta libera (a = g)."},
+ {q:"Nel moto parabolico la componente orizzontale della velocità:",
+  opts:["aumenta","diminuisce","resta costante","si annulla nel punto più alto"],ans:2,
+  exp:"In orizzontale non agisce alcuna accelerazione: v_x resta costante per tutto il volo."},
+ {q:"Nel punto più alto della traiettoria, la componente verticale della velocità è:",
+  opts:["massima","uguale a v₀","nulla","uguale a v_x"],ans:2,
+  exp:"v_y si annulla nel punto più alto; resta solo la componente orizzontale v_x."},
+ {q:"Un corpo lanciato orizzontalmente e uno lasciato cadere nello stesso istante dalla stessa altezza:",
+  opts:["tocca prima terra il lanciato","tocca prima terra quello lasciato cadere","toccano terra nello stesso istante","dipende dalla velocità di lancio"],ans:2,
+  exp:"Il moto verticale è identico e indipendente da quello orizzontale: stesso tempo di caduta."},
+ {q:"La gittata di un lancio obliquo (dal suolo) è massima per un angolo di:",
+  opts:["30°","45°","60°","90°"],ans:1,
+  exp:"R = v₀²·sin(2θ)/g è massima quando 2θ = 90°, cioè θ = 45°."},
+ {q:"Quali angoli danno la stessa gittata (a parità di velocità)?",
+  opts:["20° e 30°","30° e 60°","45° e 90°","10° e 20°"],ans:1,
+  exp:"Angoli complementari (somma 90°) danno la stessa gittata: sin(2·30°) = sin(2·60°)."},
+ {q:"Qual è la formula della gittata di un lancio obliquo dal suolo?",
+  opts:["R = v₀² · sin(2θ) / g","R = v₀ · t","R = v₀² / (2g)","R = ½ g t²"],ans:0,
+  exp:"R = v₀²·sin(2θ)/g."},
+ {q:"Un proiettile è lanciato dal suolo a 20 m/s con θ = 90° (verticale). La sua gittata è:",
+  opts:["massima","40 m","nulla","20 m"],ans:2,
+  exp:"Con θ = 90° il corpo sale e ricade nello stesso punto: sin(180°) = 0, gittata nulla."},
+ {q:"Trascurando l'aria, la traiettoria di un proiettile è:",
+  opts:["una retta","una circonferenza","una parabola","un'iperbole"],ans:2,
+  exp:"La composizione di moto uniforme e uniformemente accelerato dà una parabola."},
+ {q:"In un lancio orizzontale da un'altezza h, il tempo di volo dipende:",
+  opts:["solo dalla velocità v₀","solo dall'altezza h","da entrambe","dalla massa del corpo"],ans:1,
+  exp:"Il tempo di caduta è t = √(2h/g): dipende solo dall'altezza, non da v₀."}
+],
+riepilogo:[
+ {q:"A quanti m/s corrispondono 90 km/h?",
+  opts:["9 m/s","25 m/s","32,4 m/s","250 m/s"],ans:1,
+  exp:"90 / 3,6 = 25 m/s."},
+ {q:"La cinematica studia:",
+  opts:["le forze che causano il moto","la descrizione del moto senza occuparsi delle cause","solo i corpi in equilibrio","l'energia dei corpi"],ans:1,
+  exp:"La cinematica descrive il moto (posizione, velocità, accelerazione); delle cause si occupa la dinamica."},
+ {q:"Nel grafico velocità–tempo (v–t), l'area compresa sotto la curva rappresenta:",
+  opts:["la velocità","l'accelerazione","lo spazio percorso","il tempo"],ans:2,
+  exp:"L'area del grafico v–t è lo spostamento (spazio percorso)."},
+ {q:"Nel MRUA, con v₀ = 5 m/s e a = 2 m/s², la velocità dopo 4 s è:",
+  opts:["13 m/s","40 m/s","11 m/s","8 m/s"],ans:0,
+  exp:"v = v₀ + a·t = 5 + 2·4 = 13 m/s."},
+ {q:"Il grafico spazio–tempo (s–t) di un moto uniformemente accelerato è:",
+  opts:["una retta","una parabola","una retta orizzontale","una serie di gradini"],ans:1,
+  exp:"Per il termine ½at² la posizione descrive una parabola."},
+ {q:"Nel punto più alto di un lancio verticale, l'accelerazione del corpo è:",
+  opts:["nulla","g diretta verso il basso","g diretta verso l'alto","massima"],ans:1,
+  exp:"L'accelerazione di gravità è sempre g verso il basso, anche quando v = 0."},
+ {q:"Un corpo cade da fermo. Dopo 3 s la velocità è circa (g ≈ 9,8 m/s²):",
+  opts:["3 m/s","9,8 m/s","29,4 m/s","44 m/s"],ans:2,
+  exp:"v = g·t = 9,8 · 3 ≈ 29,4 m/s."},
+ {q:"Nel moto parabolico la velocità orizzontale:",
+  opts:["aumenta","resta costante","diminuisce","si annulla a metà volo"],ans:1,
+  exp:"In orizzontale il moto è uniforme: v_x è costante."},
+ {q:"La gittata di un lancio obliquo è massima per l'angolo:",
+  opts:["30°","45°","60°","75°"],ans:1,
+  exp:"θ = 45° massimizza sin(2θ) e quindi la gittata."},
+ {q:"Un'auto parte da ferma con a = 2 m/s². Dopo 100 m la sua velocità è (Torricelli):",
+  opts:["10 m/s","20 m/s","200 m/s","14,1 m/s"],ans:1,
+  exp:"v = √(2·a·s) = √(2·2·100) = √400 = 20 m/s."},
+ {q:"La velocità media di un viaggio si calcola come:",
+  opts:["media delle velocità dei tratti","spazio totale diviso tempo totale","la velocità massima","distanza diviso velocità iniziale"],ans:1,
+  exp:"Sempre spazio totale / tempo totale."},
+ {q:"Nel vuoto, una piuma e un martello lasciati cadere insieme:",
+  opts:["arriva prima il martello","arriva prima la piuma","arrivano insieme","la piuma resta sospesa"],ans:2,
+  exp:"Senza aria cadono con la stessa accelerazione g: arrivano insieme."},
+ {q:"Nel moto parabolico, la componente verticale del moto è identica a:",
+  opts:["un moto uniforme","una caduta libera / lancio verticale","un moto circolare","nessun moto noto"],ans:1,
+  exp:"In verticale agisce solo g: è un moto di caduta libera (o lancio verticale)."},
+ {q:"Un moto rettilineo rallenta (decelera) quando:",
+  opts:["l'accelerazione è nulla","a ha lo stesso verso di v","a ha verso opposto a v","la velocità è nulla"],ans:2,
+  exp:"Il moto rallenta se accelerazione e velocità hanno versi opposti."},
+ {q:"Il tempo di caduta da fermo da 20 m è circa (g ≈ 9,8 m/s²):",
+  opts:["1 s","2 s","4 s","0,5 s"],ans:1,
+  exp:"t = √(2·20/9,8) = √4,08 ≈ 2 s."},
+ {q:"Nel punto più alto della traiettoria di un proiettile, la sua velocità è:",
+  opts:["nulla","solo orizzontale (v_x)","solo verticale","massima"],ans:1,
+  exp:"v_y = 0 nel punto più alto, resta la sola componente orizzontale v_x."},
+ {q:"La legge oraria s = 8 + 4t (m, s) descrive un moto con:",
+  opts:["v = 8 m/s e s₀ = 4 m","v = 4 m/s e s₀ = 8 m","v = 12 m/s e s₀ = 0","v = 4 m/s e s₀ = 4 m"],ans:1,
+  exp:"Confrontando con s = s₀ + v·t: s₀ = 8 m e v = 4 m/s."},
+ {q:"Un pallone è calciato a 20 m/s con angolo di 30°. La gittata è circa (g ≈ 9,8, sin 60° ≈ 0,87):",
+  opts:["17 m","35 m","40 m","71 m"],ans:1,
+  exp:"R = v₀²·sin(2θ)/g = 400·0,866/9,81 ≈ 35 m."}
+]
+};
+
+/* ==================== MOTORE QUIZ ==================== */
+const QSECTIONS=['mru','mrua','caduta','parab','riepilogo'];
+const qState={};
+QSECTIONS.forEach(s=>{ qState[s]={idx:0,score:0,answered:false,done:false}; });
+function renderQuiz(s){
+  const st=qState[s], qs=QUIZZES[s], el=document.getElementById('qz-'+s);
+  if(!el||!qs) return;
+  const total=qs.length; let body;
+  if(st.done){
+    const r=st.score/total, mi=r<=0.3?0:r<=0.5?1:r<=0.8?2:r<=0.94?3:4;
+    const icons=['😕','🙂','😊','🎉','🏆'];
+    const msgs=['Da rivedere — rileggi la teoria e riprova.','Sufficiente — qualche lacuna da colmare.','Buono — ancora un piccolo sforzo!','Ottimo risultato!','Perfetto — nessun errore!'];
+    body=`<div class="quiz-done">
+      <span class="quiz-score-big">${icons[mi]} ${st.score}/${total}</span>
+      <p class="quiz-msg">${msgs[mi]}</p>
+      <button class="quiz-restart" onclick="restartQuiz('${s}')">🔄 Ricomincia quiz</button>
+    </div>`;
+  } else {
+    const q=qs[st.idx], pct=st.idx/total*100;
+    body=`<div class="quiz-hd">
+        <span style="color:var(--muted)">Domanda ${st.idx+1} / ${total}</span>
+        <span style="font-weight:700;color:var(--primary-d)">Punteggio: ${st.score}</span>
+      </div>
+      <div class="quiz-bar-wrap"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
+      <p class="quiz-q">${q.q}</p>
+      <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-btn" id="qb-${s}-${i}" onclick="answerQuiz('${s}',${i})">${'ABCD'[i]}) ${o}</button>`).join('')}</div>
+      <div class="quiz-exp" id="qexp-${s}" style="display:none"></div>
+      <button class="quiz-next" id="qnxt-${s}" style="display:none" onclick="nextQuiz('${s}')">${st.idx+1<total?'Prossima domanda →':'Vedi il risultato finale →'}</button>`;
+  }
+  el.innerHTML=`<div class="card"><h2>Quiz</h2>${body}</div>`;
+}
+function answerQuiz(s,chosen){
+  const st=qState[s]; if(st.answered) return; st.answered=true;
+  const q=QUIZZES[s][st.idx], correct=chosen===q.ans;
+  if(correct) st.score++;
+  for(let i=0;i<q.opts.length;i++){
+    const b=document.getElementById(`qb-${s}-${i}`); if(!b) continue;
+    b.disabled=true;
+    if(i===q.ans) b.classList.add('correct');
+    else if(i===chosen) b.classList.add('wrong');
+  }
+  const exp=document.getElementById(`qexp-${s}`);
+  exp.style.display=''; exp.className=`quiz-exp ${correct?'ok':'no'}`;
+  exp.innerHTML=`<strong>${correct?'✓ Corretto!':'✗ Sbagliato.'}</strong> ${q.exp}`;
+  document.getElementById(`qnxt-${s}`).style.display='';
+}
+function nextQuiz(s){
+  const st=qState[s]; st.idx++; st.answered=false;
+  if(st.idx>=QUIZZES[s].length) st.done=true;
+  renderQuiz(s);
+}
+function restartQuiz(s){ qState[s]={idx:0,score:0,answered:false,done:false}; renderQuiz(s); }
+
+/* ==================== INIZIALIZZAZIONE ==================== */
+bindRange('mruS0','mruS0v',v=>fmtTick(v)+' m');
+bindRange('mruV','mruVv',v=>fmtTick(v)+' m/s');
+bindRange('mruaV0','mruaV0v',v=>fmtTick(v)+' m/s');
+bindRange('mruaA','mruaAv',v=>fmtTick(v)+' m/s²');
+bindRange('cadH0','cadH0v',v=>fmtTick(v)+' m');
+bindRange('cadV0','cadV0v',v=>fmtTick(v)+' m/s');
+bindRange('parV0','parV0v',v=>fmtTick(v)+' m/s');
+bindRange('parAng','parAngv',v=>fmtTick(v)+'°');
+bindRange('parH0','parH0v',v=>fmtTick(v)+' m');
+
+document.getElementById('cadV0').disabled=true;   /* modalità "Caduta libera" iniziale */
+
+QSECTIONS.forEach(renderQuiz);
+['mru','mrua','caduta','parab'].forEach(renderEsercizi);
+
+window.addEventListener('beforeprint',()=>{
+  document.querySelectorAll('.esercizio .sol-btn').forEach(b=>{ if(!b.disabled) b.click(); });
+});
+
+const _hdr=document.querySelector('header'), _nav=document.querySelector('nav.main');
+function _updateNavTop(){ _nav.style.top=_hdr.offsetHeight+'px'; }
+new ResizeObserver(_updateNavTop).observe(_hdr); _updateNavTop();
+
+simMru.draw(); simMrua.draw(); simCad.draw(); simPar.draw();
+</script>
+</body>
+</html>
