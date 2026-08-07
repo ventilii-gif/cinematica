@@ -245,6 +245,14 @@ nav.subnav button.active{color:var(--primary);border-bottom-color:var(--primary)
 .graph-box .g-cap{font-size:.72em;color:var(--muted);font-weight:600;margin:0 0 .15rem;text-align:center}
 svg.graph{width:100%;height:auto;background:#fcfdff;border:1px solid var(--border);border-radius:8px;display:block}
 svg#svgCad{height:430px;width:auto;max-width:100%;margin:0 auto}
+/* Frazioni e radici in forma matematica */
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.12}
+.frac>span{display:block;padding:0 .35em}
+.frac .num{border-bottom:1.6px solid currentColor}
+.rad{display:inline-flex;align-items:flex-start;margin:0 .05em}
+.rad .rs{font-size:1.35em;line-height:1;margin-right:-.05em}
+.rad .ra{border-top:1.7px solid currentColor;padding:.16em .32em 0;margin-top:.16em}
+.rad .frac{margin-top:0;margin-bottom:0}
 .playbar{display:flex;align-items:center;gap:.5rem;margin-top:.7rem;flex-wrap:wrap}
 .play-btn{background:var(--primary);color:#fff;border:0;border-radius:8px;padding:.42rem .9rem;
   font-size:.86em;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;min-height:34px}
@@ -295,7 +303,7 @@ svg#svgCad{height:430px;width:auto;max-width:100%;margin:0 auto}
     <p>Per semplificare, il corpo si schematizza come <strong>punto materiale</strong>: un oggetto di dimensioni trascurabili rispetto al percorso, di cui interessa solo la posizione. La linea che il punto descrive nello spazio è la <strong>traiettoria</strong>.</p>
     <div class="tip">Il moto è sempre <strong>relativo</strong>: esiste solo rispetto a un <strong>sistema di riferimento</strong>. Un passeggero è fermo rispetto al treno ma in moto rispetto alla stazione. Scegliere il riferimento (origine, asse, verso positivo) è il primo passo di ogni problema.</div>
     <p>Le due relazioni che governano tutta la cinematica del punto sono la definizione di <strong>velocità</strong> e di <strong>accelerazione</strong>:</p>
-    <div class="formula">v<sub>media</sub> = Δs / Δt <br> a<sub>media</sub> = Δv / Δt</div>
+    <div class="formula">v<sub>media</sub> = <span class="frac"><span class="num">Δs</span><span class="den">Δt</span></span> <br> a<sub>media</sub> = <span class="frac"><span class="num">Δv</span><span class="den">Δt</span></span></div>
     <p class="lead">In queste pagine studierai quattro moti fondamentali, dal più semplice (velocità costante) alla traiettoria curva del moto parabolico. Ogni argomento è diviso in quattro parti: <strong>Teoria</strong>, <strong>Simulazione</strong> interattiva, <strong>Esercizi</strong> graduati e <strong>Quiz</strong>.</p>
   </div>
 
@@ -304,9 +312,9 @@ svg#svgCad{height:430px;width:auto;max-width:100%;margin:0 auto}
     <h3>Posizione, spostamento e spazio percorso</h3>
     <p>La <strong>posizione</strong> <em>s</em> individua dove si trova il punto sulla traiettoria rispetto all'origine. Lo <strong>spostamento</strong> Δs = s − s₀ è la <em>variazione</em> di posizione (ha un segno, dipende solo da inizio e fine). Lo <strong>spazio percorso</strong> è invece la lunghezza effettiva del cammino: coincide con |Δs| solo se il moto non cambia verso.</p>
     <h3>Velocità</h3>
-    <p>La <strong>velocità media</strong> misura quanto rapidamente cambia la posizione: v = Δs/Δt. La <strong>velocità istantanea</strong> è la velocità in un preciso istante (quella del tachimetro). La velocità è una grandezza <strong>vettoriale</strong>: ha intensità, direzione e <strong>verso</strong> (in una dimensione, un segno + o −).</p>
+    <p>La <strong>velocità media</strong> misura quanto rapidamente cambia la posizione: v = <span class="frac"><span class="num">Δs</span><span class="den">Δt</span></span>. La <strong>velocità istantanea</strong> è la velocità in un preciso istante (quella del tachimetro). La velocità è una grandezza <strong>vettoriale</strong>: ha intensità, direzione e <strong>verso</strong> (in una dimensione, un segno + o −).</p>
     <h3>Accelerazione</h3>
-    <p>L'<strong>accelerazione</strong> misura quanto rapidamente cambia la velocità: a = Δv/Δt. Se <em>a</em> ha lo stesso verso di <em>v</em> il moto accelera; se ha verso opposto, il moto rallenta (<strong>decelerazione</strong>).</p>
+    <p>L'<strong>accelerazione</strong> misura quanto rapidamente cambia la velocità: a = <span class="frac"><span class="num">Δv</span><span class="den">Δt</span></span>. Se <em>a</em> ha lo stesso verso di <em>v</em> il moto accelera; se ha verso opposto, il moto rallenta (<strong>decelerazione</strong>).</p>
     <h3>Unità di misura (Sistema Internazionale)</h3>
     <table class="gtable">
       <tr><th>Grandezza</th><th>Simbolo</th><th>Unità SI</th></tr>
@@ -362,7 +370,7 @@ svg#svgCad{height:430px;width:auto;max-width:100%;margin:0 auto}
     <div class="formula">v = costante <br> a = 0</div>
     <p>«Uniforme» significa che il punto percorre <strong>spazi uguali in intervalli di tempo uguali</strong>: 5 m ogni secondo, sempre.</p>
     <h3>Legge oraria</h3>
-    <p>La <strong>legge oraria</strong> dà la posizione in funzione del tempo. Partendo dalla definizione v = Δs/Δt = (s − s₀)/(t − 0) si ricava:</p>
+    <p>La <strong>legge oraria</strong> dà la posizione in funzione del tempo. Partendo dalla definizione v = <span class="frac"><span class="num">Δs</span><span class="den">Δt</span></span> = <span class="frac"><span class="num">s − s₀</span><span class="den">t − 0</span></span> si ricava:</p>
     <div class="formula">s = s₀ + v · t</div>
     <p>dove <em>s₀</em> è la posizione iniziale (all'istante t = 0) e <em>v</em> la velocità (con il suo segno).</p>
     <h3>I grafici del moto</h3>
@@ -432,13 +440,13 @@ svg#svgCad{height:430px;width:auto;max-width:100%;margin:0 auto}
     <p>Un punto si muove di <strong>moto uniformemente accelerato</strong> quando la traiettoria è rettilinea e l'<strong>accelerazione è costante</strong>. La velocità non è più costante: cambia della stessa quantità in ogni secondo.</p>
     <div class="formula">a = costante</div>
     <h3>Legge della velocità</h3>
-    <p>Dalla definizione a = Δv/Δt, con velocità iniziale <em>v₀</em>, si ottiene una relazione lineare nel tempo:</p>
+    <p>Dalla definizione a = <span class="frac"><span class="num">Δv</span><span class="den">Δt</span></span>, con velocità iniziale <em>v₀</em>, si ottiene una relazione lineare nel tempo:</p>
     <div class="formula">v = v₀ + a · t</div>
     <h3>Legge oraria (posizione)</h3>
     <p>La posizione cresce con un termine quadratico nel tempo:</p>
     <div class="formula">s = s₀ + v₀ · t + ½ · a · t²</div>
     <p>Poiché in questo moto la velocità varia in modo lineare, la <strong>velocità media</strong> è la media aritmetica di quella iniziale e finale:</p>
-    <div class="formula">v<sub>media</sub> = (v₀ + v) / 2 &nbsp;&nbsp;⇒&nbsp;&nbsp; Δs = (v₀ + v)/2 · t</div>
+    <div class="formula">v<sub>media</sub> = <span class="frac"><span class="num">v₀ + v</span><span class="den">2</span></span> &nbsp;&nbsp;⇒&nbsp;&nbsp; Δs = <span class="frac"><span class="num">v₀ + v</span><span class="den">2</span></span> · t</div>
     <h3>Equazione senza tempo (Torricelli)</h3>
     <p>Combinando le due leggi ed eliminando <em>t</em> si ottiene una relazione che lega velocità e spazio, utile quando il tempo non è noto:</p>
     <div class="formula">v² = v₀² + 2 · a · Δs</div>
@@ -511,14 +519,14 @@ svg#svgCad{height:430px;width:auto;max-width:100%;margin:0 auto}
     <p>Un corpo lasciato cadere (v₀ = 0). Conviene prendere <strong>positivo il verso del moto (verso il basso)</strong>, così a = +g. Dette <em>h</em> l'altezza di caduta e <em>t</em> il tempo:</p>
     <div class="formula">v = g · t <br> h = ½ · g · t²</div>
     <p>Da queste si ricavano il tempo di caduta e la velocità con cui arriva a terra:</p>
-    <div class="formula">t = √(2h / g) <br> v = √(2 · g · h)</div>
+    <div class="formula">t = <span class="rad"><span class="rs">√</span><span class="ra"><span class="frac"><span class="num">2h</span><span class="den">g</span></span></span></span> <br> v = <span class="rad"><span class="rs">√</span><span class="ra">2 · g · h</span></span></div>
 
     <h3>Lancio verso l'alto</h3>
     <p>Se il corpo è lanciato verso l'alto con velocità iniziale <em>v₀</em>, conviene prendere <strong>positivo il verso verso l'alto</strong>: allora l'accelerazione è opposta al verso positivo, a = −g. Le leggi diventano:</p>
     <div class="formula">v = v₀ − g · t <br> y = v₀ · t − ½ · g · t²</div>
     <p>Il corpo <strong>sale rallentando</strong>, si ferma un istante (v = 0) nel punto più alto, poi ricade accelerando. Nel punto più alto:</p>
-    <div class="formula">t<sub>salita</sub> = v₀ / g <br> h<sub>max</sub> = v₀² / (2g)</div>
-    <div class="tip"><strong>Simmetria del moto:</strong> il tempo di salita è uguale al tempo di discesa, e il corpo ripassa da ogni quota con velocità di uguale intensità ma verso opposto. Il tempo totale di volo (ritorno al punto di lancio) è t<sub>volo</sub> = 2v₀/g.</div>
+    <div class="formula">t<sub>salita</sub> = <span class="frac"><span class="num">v₀</span><span class="den">g</span></span> <br> h<sub>max</sub> = <span class="frac"><span class="num">v₀²</span><span class="den">2g</span></span></div>
+    <div class="tip"><strong>Simmetria del moto:</strong> il tempo di salita è uguale al tempo di discesa, e il corpo ripassa da ogni quota con velocità di uguale intensità ma verso opposto. Il tempo totale di volo (ritorno al punto di lancio) è t<sub>volo</sub> = <span class="frac"><span class="num">2v₀</span><span class="den">g</span></span>.</div>
     <div class="warn">La velocità cambia di continuo, ma l'accelerazione resta <strong>sempre g verso il basso</strong>, anche nell'istante in cui, nel punto più alto, la velocità è nulla. Velocità zero <em>non</em> significa accelerazione zero.</div>
   </div>
   </div>
@@ -590,15 +598,15 @@ verticale  → caduta libera:  a = g verso il basso</div>
     <p>Velocità iniziale solo orizzontale (v₀ₓ = v₀, v₀ᵧ = 0). Le due leggi orarie sono:</p>
     <div class="formula">x = v₀ · t <br> y = h − ½ · g · t²</div>
     <p>Il corpo tocca terra quando y = 0, nello <strong>stesso tempo</strong> di un corpo lasciato semplicemente cadere dalla stessa altezza:</p>
-    <div class="formula">t<sub>volo</sub> = √(2h / g) <br> gittata = v₀ · √(2h / g)</div>
+    <div class="formula">t<sub>volo</sub> = <span class="rad"><span class="rs">√</span><span class="ra"><span class="frac"><span class="num">2h</span><span class="den">g</span></span></span></span> <br> gittata = v₀ · <span class="rad"><span class="rs">√</span><span class="ra"><span class="frac"><span class="num">2h</span><span class="den">g</span></span></span></span></div>
 
     <h3>Lancio obliquo (dal suolo, angolo θ)</h3>
     <p>La velocità iniziale si scompone nelle due direzioni:</p>
     <div class="formula">v₀ₓ = v₀ cos θ <br> v₀ᵧ = v₀ sin θ</div>
     <p>La componente orizzontale resta costante; quella verticale segue il lancio verso l'alto. Si ricavano tempo di volo, altezza massima e gittata:</p>
-    <div class="formula">t<sub>volo</sub> = 2 v₀ sin θ / g</div>
-    <div class="formula">h<sub>max</sub> = v₀² sin²θ / (2g)</div>
-    <div class="formula">gittata  R = v₀² sin(2θ) / g</div>
+    <div class="formula">t<sub>volo</sub> = <span class="frac"><span class="num">2 v₀ sin θ</span><span class="den">g</span></span></div>
+    <div class="formula">h<sub>max</sub> = <span class="frac"><span class="num">v₀² sin²θ</span><span class="den">2g</span></span></div>
+    <div class="formula">gittata  R = <span class="frac"><span class="num">v₀² sin(2θ)</span><span class="den">g</span></span></div>
     <div class="tip"><strong>Gittata massima a 45°.</strong> Poiché R dipende da sin(2θ), la gittata è massima quando 2θ = 90°, cioè θ = 45°. Inoltre due angoli <strong>complementari</strong> (per esempio 30° e 60°) danno la <strong>stessa gittata</strong>.</div>
     <div class="warn">La traiettoria è una <strong>parabola</strong>. Nel punto più alto la velocità <em>non</em> è nulla: si annulla solo la componente verticale v<sub>y</sub>, mentre v<sub>x</sub> resta invariata per tutto il volo.</div>
   </div>
