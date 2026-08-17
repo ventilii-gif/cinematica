@@ -161,6 +161,45 @@ svg.sim.grab:active,svg.sim.grab.dragging{cursor:grabbing}
 .quiz-exp.ok{background:#eaf6ec;border-left:3px solid #388e3c;color:#1b5e20}
 .quiz-exp.no{background:#fdeaea;border-left:3px solid #c62828;color:#b71c1c}
 .quiz-restart{display:inline-flex;align-items:center;justify-content:center;gap:.42em}
+/* Quiz riepilogativo: correzione alla fine */
+.quiz-note-end{font-size:.8em;color:var(--text-soft);margin:0 0 .6rem;font-style:italic}
+.quiz-btn.chosen{background:var(--accent-soft)!important;border-color:var(--accent)!important;color:var(--accent-d);font-weight:600}
+.quiz-nav-row{display:flex;gap:.5rem;align-items:center;justify-content:space-between;margin-top:.4rem}
+.quiz-prev{background:var(--surface2);border:1.5px solid var(--border);color:var(--accent-d);border-radius:8px;
+  padding:.46rem 1rem;font-size:.87em;cursor:pointer;font-family:inherit;transition:background .15s,border-color .15s}
+.quiz-prev:hover{background:var(--accent-soft);border-color:var(--accent)}
+.quiz-next:disabled{opacity:.5;cursor:default}
+.quiz-review{margin-top:1rem;display:grid;gap:.6rem}
+.qr-item{border:1px solid var(--border);border-left:3px solid var(--border);border-radius:8px;
+  padding:.6rem .85rem;background:var(--surface2);font-size:.9em}
+.qr-item.ok{border-left-color:var(--correct)}
+.qr-item.no{border-left-color:var(--wrong)}
+.qr-q{font-weight:600;margin-bottom:.35rem;color:var(--text)}
+.qr-a,.qr-correct{display:flex;align-items:flex-start;gap:.35em;margin:.15rem 0}
+.qr-item.ok .qr-a{color:var(--correct)}
+.qr-item.no .qr-a{color:var(--wrong)}
+.qr-correct{color:var(--correct)}
+.qr-exp{color:var(--text-soft);font-size:.95em;margin-top:.35rem}
+/* Verifica numerica esercizi */
+.ex-verify{margin:.6rem 0 .2rem;padding:.65rem .8rem;border:1px dashed var(--border);border-radius:10px;background:var(--surface2)}
+.ver-lab{font-size:.86em;font-weight:700;color:var(--accent-d);margin:0 0 .5rem}
+.ver-inputs{display:flex;flex-wrap:wrap;gap:.55rem .9rem;margin-bottom:.55rem}
+.ver-field{display:inline-flex;align-items:center;gap:.35em;font-size:.9em}
+.ver-name{color:var(--text-soft);font-family:var(--mono)}
+.ver-in{width:5.6em;padding:.3rem .45rem;border:1.5px solid var(--border);border-radius:7px;background:var(--card);
+  color:var(--text);font-family:var(--mono);font-size:.95em;min-height:40px}
+.ver-in.ok{border-color:var(--correct);background:color-mix(in srgb,var(--correct) 12%,transparent)}
+.ver-in.no{border-color:var(--wrong);background:color-mix(in srgb,var(--wrong) 12%,transparent)}
+.ver-unit{color:var(--text-soft);font-size:.9em;font-family:var(--mono)}
+.ver-fb{display:inline-flex;width:1.05em}
+.ver-fb.ok{color:var(--correct)}
+.ver-fb.no{color:var(--wrong)}
+.ver-row{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+.ver-result{display:inline-flex;align-items:center;gap:.3em;font-size:.88em;font-weight:600}
+.ver-result.ok{color:var(--correct)}
+.ver-result.no{color:var(--wrong)}
+.ver-note{font-size:.78em;color:var(--text-soft);margin:.4rem 0 0}
+@media print{.ex-verify{display:none!important}}
 .quiz-next,.quiz-restart{background:var(--accent);color:#fff;border:0;border-radius:8px;
   padding:.46rem 1.15rem;font-size:.87em;cursor:pointer;font-family:inherit;
   transition:background .15s}
@@ -770,7 +809,7 @@ nav.main button,nav.subnav button,.play-btn,.icon-btn,.btn-print,.quiz-btn,.ex-b
 <section class="scene" id="quiz" data-title="Quiz riepilogativo">
   <div class="card">
     <h2>Quiz riepilogativo</h2>
-    <p class="lead">Un'unica batteria di domande su <strong>tutti</strong> gli argomenti — MRU, MRUA, caduta libera e moto parabolico — per verificare la comprensione complessiva. Ad ogni risposta compare subito la spiegazione; alla fine ottieni il punteggio.</p>
+    <p class="lead">Un'unica batteria di domande su <strong>tutti</strong> gli argomenti — MRU, MRUA, caduta libera e moto parabolico — per verificare la comprensione complessiva. Qui le <strong>correzioni compaiono solo alla fine</strong>: rispondi a tutte le domande, poi ottieni punteggio e revisione completa con le spiegazioni.</p>
   </div>
   <div id="qz-riepilogo" class="quiz-block"></div>
 </section>
@@ -1431,6 +1470,67 @@ parab:[
 ]
 };
 
+/* ==================== RISPOSTE NUMERICHE (verifica ±2% sui decimali, esatta sugli interi) ==================== */
+const CHECKS={
+mru:[
+ [{l:'v',u:'m/s',a:8},{l:'v',u:'km/h',a:28.8}],
+ [{l:'Δs',u:'m',a:300}],
+ [{l:'Δt',u:'s',a:150}],
+ null,
+ [{l:'s(6 s)',u:'m',a:23},{l:'Δs',u:'m',a:18}],
+ [{l:'t',u:'h',a:2},{l:'dist. da A',u:'km',a:160}],
+ [{l:'t',u:'s',a:10}],
+ [{l:'v media',u:'km/h',a:66.7}]
+],
+mrua:[
+ [{l:'v',u:'m/s',a:20},{l:'v',u:'km/h',a:72}],
+ [{l:'s',u:'m',a:80}],
+ [{l:'a',u:'m/s²',a:5},{l:'s',u:'m',a:62.5}],
+ [{l:'t',u:'s',a:5},{l:'spazio',u:'m',a:50}],
+ [{l:'v',u:'m/s',a:12}],
+ [{l:'s',u:'m',a:60},{l:'v',u:'m/s',a:16}],
+ [{l:'Δs (10° s)',u:'m',a:4.75}],
+ [{l:'t',u:'s',a:10},{l:'s',u:'m',a:200}]
+],
+caduta:[
+ [{l:'t',u:'s',a:2.02},{l:'v',u:'m/s',a:19.8}],
+ [{l:'v',u:'m/s',a:29.4},{l:'h',u:'m',a:44.1}],
+ [{l:'h',u:'m',a:30.7},{l:'v',u:'m/s',a:24.5}],
+ [{l:'h max',u:'m',a:20.4},{l:'t salita',u:'s',a:2.04}],
+ [{l:'t volo',u:'s',a:4.08},{l:'v ritorno',u:'m/s',a:20}],
+ [{l:'v',u:'m/s',a:11.3}],
+ [{l:'t',u:'s',a:1.59},{l:'v',u:'m/s',a:23.6}],
+ [{l:'t',u:'s',a:3.03},{l:'v',u:'m/s',a:29.7}]
+],
+parab:[
+ [{l:'t',u:'s',a:0.505},{l:'gittata',u:'m',a:1.51}],
+ [{l:'v₀',u:'m/s',a:29.7}],
+ [{l:'v₀ₓ',u:'m/s',a:20},{l:'v₀ᵧ',u:'m/s',a:15}],
+ [{l:'R',u:'m',a:35.3}],
+ [{l:'h max',u:'m',a:11.5},{l:'t',u:'s',a:3.06},{l:'R',u:'m',a:61.2}],
+ [{l:'θ',u:'°',a:45},{l:'R max',u:'m',a:91.7}],
+ [{l:'R',u:'m',a:35.3}],
+ [{l:'v in cima',u:'m/s',a:20}]
+]
+};
+function exCheck(raw,a){
+  const v=parseFloat(String(raw).trim().replace(',','.').replace(/[^0-9.+\-]/g,''));
+  if(isNaN(v)) return null;
+  if(Number.isInteger(a)) return Math.round(v)===a;      /* interi: risposta esatta */
+  return Math.abs(v-a)<=Math.abs(a)*0.02;                /* decimali: tolleranza ±2% */
+}
+function exVerifyBlock(chk){
+  if(!chk||!chk.length) return '';
+  const fields=chk.map(c=>`<span class="ver-field"><span class="ver-name">${c.l} =</span><input class="ver-in" type="text" inputmode="decimal" autocomplete="off" data-a="${c.a}" aria-label="Risposta: ${c.l} in ${c.u}"><span class="ver-unit">${c.u}</span><span class="ver-fb" aria-hidden="true"></span></span>`).join('');
+  return `<div class="ex-verify">
+    <p class="ver-lab">Verifica la tua risposta</p>
+    <div class="ver-inputs">${fields}</div>
+    <div class="ver-row"><button class="ex-btn ver-btn" type="button">Verifica</button>
+      <span class="ver-result" role="status" aria-live="polite"></span></div>
+    <p class="ver-note">Tolleranza ±2% sui valori decimali; valori interi esatti.</p>
+  </div>`;
+}
+
 /* ==================== RENDER ESERCIZI (suggerimenti progressivi) ==================== */
 function renderEsercizi(sec){
   const el=document.getElementById('ex-'+sec), list=ESERCIZI[sec];
@@ -1441,6 +1541,7 @@ function renderEsercizi(sec){
       <h3>Esercizio ${i+1} — ${e.t}</h3>
       <p class="testo">${e.p}</p>
       <div class="dati"><b>Dati:</b> ${e.d}</div>
+      ${exVerifyBlock(CHECKS[sec]?CHECKS[sec][i]:null)}
       <div class="hints"></div>
       <div class="sol"></div>
       <div class="ex-actions">
@@ -1479,6 +1580,25 @@ function renderEsercizi(sec){
       solEl.innerHTML=h;
       solBtn.disabled=true; solBtn.style.opacity=.45; solBtn.style.cursor='default'; solBtn.textContent='Soluzione mostrata';
     });
+    const verBtn=card.querySelector('.ver-btn');
+    if(verBtn){
+      const result=card.querySelector('.ver-result');
+      verBtn.addEventListener('click',()=>{
+        const ins=[...card.querySelectorAll('.ver-in')]; let allok=true, any=false;
+        ins.forEach(inp=>{
+          const fb=inp.parentElement.querySelector('.ver-fb');
+          const res=exCheck(inp.value, parseFloat(inp.dataset.a));
+          inp.classList.remove('ok','no'); fb.classList.remove('ok','no'); fb.innerHTML='';
+          if(res===null) return;
+          any=true;
+          if(res){ inp.classList.add('ok'); fb.className='ver-fb ok'; fb.innerHTML=IC.check; }
+          else { inp.classList.add('no'); fb.className='ver-fb no'; fb.innerHTML=IC.cross; allok=false; }
+        });
+        if(!any){ result.className='ver-result'; result.textContent='Inserisci almeno un valore.'; return; }
+        result.className='ver-result '+(allok?'ok':'no');
+        result.innerHTML=(allok?IC.check+'<span>Tutto corretto!</span>':IC.cross+'<span>Rivedi i valori in rosso.</span>');
+      });
+    }
   });
 }
 
@@ -1672,20 +1792,48 @@ riepilogo:[
 
 /* ==================== MOTORE QUIZ ==================== */
 const QSECTIONS=['mru','mrua','caduta','parab','riepilogo'];
+const QUIZ_ENDONLY={riepilogo:true};   /* correzione mostrata solo alla fine (solo il riepilogativo) */
 const qState={};
-QSECTIONS.forEach(s=>{ qState[s]={idx:0,score:0,answered:false,done:false}; });
+QSECTIONS.forEach(s=>{ qState[s]={idx:0,score:0,answered:false,done:false,answers:[]}; });
+function quizScore(s){ const qs=QUIZZES[s], st=qState[s];
+  if(QUIZ_ENDONLY[s]){ let n=0; qs.forEach((q,i)=>{ if(st.answers[i]===q.ans) n++; }); return n; }
+  return st.score; }
 function renderQuiz(s){
   const st=qState[s], qs=QUIZZES[s], el=document.getElementById('qz-'+s);
   if(!el||!qs) return;
-  const total=qs.length; let body;
+  const total=qs.length, endOnly=!!QUIZ_ENDONLY[s]; let body;
+  const msgs=['Da rivedere — rileggi la teoria e riprova.','Sufficiente — qualche lacuna da colmare.','Buono — ancora un piccolo sforzo!','Ottimo risultato!','Perfetto — nessun errore!'];
   if(st.done){
-    const r=st.score/total, mi=r<=0.3?0:r<=0.5?1:r<=0.8?2:r<=0.94?3:4;
-    const msgs=['Da rivedere — rileggi la teoria e riprova.','Sufficiente — qualche lacuna da colmare.','Buono — ancora un piccolo sforzo!','Ottimo risultato!','Perfetto — nessun errore!'];
+    const score=quizScore(s), r=score/total, mi=r<=0.3?0:r<=0.5?1:r<=0.8?2:r<=0.94?3:4;
+    let review='';
+    if(endOnly){
+      review='<div class="quiz-review">'+qs.map((q,i)=>{ const ch=st.answers[i], ok=ch===q.ans;
+        return `<div class="qr-item ${ok?'ok':'no'}">
+          <div class="qr-q">${i+1}. ${q.q}</div>
+          <div class="qr-a">${ok?IC.check:IC.cross}<span>La tua risposta: <b>${ch==null?'nessuna':(('ABCD'[ch])+') '+q.opts[ch])}</b></span></div>
+          ${ok?'':`<div class="qr-correct">${IC.check}<span>Corretta: <b>${'ABCD'[q.ans]}) ${q.opts[q.ans]}</b></span></div>`}
+          <div class="qr-exp">${q.exp}</div>
+        </div>`; }).join('')+'</div>';
+    }
     body=`<div class="quiz-done">${IC.trophy}
-      <span class="quiz-score-big">${st.score}/${total}</span>
+      <span class="quiz-score-big">${score}/${total}</span>
       <p class="quiz-msg">${msgs[mi]}</p>
       <button class="quiz-restart" onclick="restartQuiz('${s}')">${IC.reset}<span>Ricomincia quiz</span></button>
-    </div>`;
+    </div>${review}`;
+  } else if(endOnly){
+    const q=qs[st.idx], pct=st.idx/total*100, chosen=st.answers[st.idx], nAns=st.answers.filter(a=>a!=null).length;
+    body=`<div class="quiz-hd">
+        <span style="color:var(--text-soft)">Domanda ${st.idx+1} / ${total}</span>
+        <span style="font-weight:700;color:var(--accent-d)">Risposte: ${nAns}/${total}</span>
+      </div>
+      <div class="quiz-bar-wrap"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
+      <p class="quiz-note-end">Le correzioni compaiono alla fine del quiz.</p>
+      <p class="quiz-q">${q.q}</p>
+      <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-btn${chosen===i?' chosen':''}" onclick="answerQuiz('${s}',${i})">${'ABCD'[i]}) ${o}</button>`).join('')}</div>
+      <div class="quiz-nav-row">
+        ${st.idx>0?`<button class="quiz-prev" onclick="prevQuiz('${s}')">← Precedente</button>`:'<span></span>'}
+        <button class="quiz-next" ${chosen==null?'disabled':''} onclick="nextQuiz('${s}')">${st.idx+1<total?'Prossima domanda →':'Vedi il risultato finale →'}</button>
+      </div>`;
   } else {
     const q=qs[st.idx], pct=st.idx/total*100;
     body=`<div class="quiz-hd">
@@ -1701,7 +1849,9 @@ function renderQuiz(s){
   el.innerHTML=`<div class="card"><h2>Quiz</h2>${body}</div>`;
 }
 function answerQuiz(s,chosen){
-  const st=qState[s]; if(st.answered) return; st.answered=true;
+  const st=qState[s];
+  if(QUIZ_ENDONLY[s]){ st.answers[st.idx]=chosen; renderQuiz(s); return; }
+  if(st.answered) return; st.answered=true;
   const q=QUIZZES[s][st.idx], correct=chosen===q.ans;
   if(correct) st.score++;
   for(let i=0;i<q.opts.length;i++){
@@ -1720,7 +1870,8 @@ function nextQuiz(s){
   if(st.idx>=QUIZZES[s].length){ st.done=true; markDone(s); }
   renderQuiz(s);
 }
-function restartQuiz(s){ qState[s]={idx:0,score:0,answered:false,done:false}; renderQuiz(s); }
+function prevQuiz(s){ const st=qState[s]; if(st.idx>0){ st.idx--; st.answered=false; renderQuiz(s); } }
+function restartQuiz(s){ qState[s]={idx:0,score:0,answered:false,done:false,answers:[]}; renderQuiz(s); }
 
 /* ==================== INIZIALIZZAZIONE ==================== */
 bindRange('mruS0','mruS0v',v=>fmtTick(v)+' m');
