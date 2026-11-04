@@ -1790,26 +1790,124 @@ riepilogo:[
 ]
 };
 
+/* ==================== DOMANDE AGGIUNTIVE (pool 3×, estratte a caso) ==================== */
+const QUIZZES_EXTRA={
+mru:[
+ {q:"A quanti m/s corrispondono 36 km/h?",opts:["10 m/s","3,6 m/s","13 m/s","100 m/s"],ans:0,exp:"36 / 3,6 = 10 m/s."},
+ {q:"Un corpo in MRU percorre 150 m in 30 s. Qual è la sua velocità?",opts:["5 m/s","4,5 m/s","0,2 m/s","180 m/s"],ans:0,exp:"v = 150 / 30 = 5 m/s."},
+ {q:"Con legge oraria s = 10 + 2t (m, s), la posizione a t = 5 s è:",opts:["20 m","10 m","12 m","25 m"],ans:0,exp:"s = 10 + 2·5 = 20 m."},
+ {q:"In un grafico spazio–tempo, un tratto orizzontale indica che il corpo:",opts:["è fermo","accelera","torna indietro","va velocissimo"],ans:0,exp:"Pendenza nulla ⇒ v = 0: il corpo è fermo."},
+ {q:"Nel grafico s–t, la retta più ripida corrisponde a una velocità:",opts:["maggiore","minore","uguale","nulla"],ans:0,exp:"Più ripida la pendenza, maggiore la velocità."},
+ {q:"Due auto vanno una incontro all'altra a 60 e 40 km/h. La distanza tra loro diminuisce di:",opts:["100 km/h","20 km/h","50 km/h","2400 km/h"],ans:0,exp:"In senso opposto le velocità si sommano: 100 km/h."},
+ {q:"Nella legge oraria s = 50 − 10t (m, s) la velocità è:",opts:["−10 m/s","+10 m/s","+50 m/s","0"],ans:0,exp:"Il coefficiente di t è −10: v = −10 m/s (verso negativo)."},
+ {q:"108 km/h in m/s valgono:",opts:["30 m/s","36 m/s","3 m/s","300 m/s"],ans:0,exp:"108 / 3,6 = 30 m/s."},
+ {q:"Un'auto a 25 m/s costanti percorre in 8 s:",opts:["200 m","33 m","3,1 m","125 m"],ans:0,exp:"Δs = 25·8 = 200 m."},
+ {q:"Quanto tempo serve per percorrere 300 m a 12 m/s costanti?",opts:["25 s","3600 s","288 s","0,04 s"],ans:0,exp:"t = 300 / 12 = 25 s."},
+ {q:"Nel moto rettilineo uniforme l'accelerazione vale:",opts:["zero","g","costante e positiva","uguale a v"],ans:0,exp:"Velocità costante ⇒ a = 0."},
+ {q:"L'area compresa sotto il grafico velocità–tempo rappresenta:",opts:["lo spostamento","la velocità","l'accelerazione","il tempo"],ans:0,exp:"Area del grafico v–t = v·t = Δs."},
+ {q:"18 km/h in m/s sono:",opts:["5 m/s","18 m/s","1,8 m/s","50 m/s"],ans:0,exp:"18 / 3,6 = 5 m/s."},
+ {q:"Un viaggio di 120 km percorso in 2 h ha velocità media:",opts:["60 km/h","240 km/h","122 km/h","0,017 km/h"],ans:0,exp:"v = 120 / 2 = 60 km/h."},
+ {q:"Una moto a 30 m/s insegue un'auto a 20 m/s (stesso verso): la moto recupera:",opts:["10 m/s","50 m/s","1,5 m/s","600 m/s"],ans:0,exp:"Stesso verso: differenza 30 − 20 = 10 m/s."},
+ {q:"Nel MRU, in intervalli di tempo uguali il corpo percorre spazi:",opts:["uguali","crescenti","decrescenti","casuali"],ans:0,exp:"«Uniforme»: spazi uguali in tempi uguali."},
+ {q:"Un treno a 20 m/s percorre 1 km in:",opts:["50 s","20 s","1000 s","0,02 s"],ans:0,exp:"t = 1000 / 20 = 50 s."},
+ {q:"Nel MRU, velocità istantanea e velocità media sono:",opts:["uguali","sempre diverse","opposte","nulle"],ans:0,exp:"Con v costante coincidono."},
+ {q:"2 m/s in km/h sono:",opts:["7,2 km/h","0,56 km/h","2 km/h","20 km/h"],ans:0,exp:"2 · 3,6 = 7,2 km/h."},
+ {q:"Un pedone a 1,5 m/s attraversa una strada larga 12 m in:",opts:["8 s","18 s","10,5 s","0,125 s"],ans:0,exp:"t = 12 / 1,5 = 8 s."}
+],
+mrua:[
+ {q:"Un corpo parte da fermo con a = 3 m/s². Dopo 4 s la velocità è:",opts:["12 m/s","7 m/s","0,75 m/s","48 m/s"],ans:0,exp:"v = a·t = 3·4 = 12 m/s."},
+ {q:"Partendo da fermo con a = 2 m/s², in 5 s si percorrono:",opts:["25 m","10 m","50 m","5 m"],ans:0,exp:"s = ½·a·t² = ½·2·25 = 25 m."},
+ {q:"Da fermo con a = 2 m/s², dopo 25 m la velocità è (Torricelli):",opts:["10 m/s","5 m/s","100 m/s","7,1 m/s"],ans:0,exp:"v = √(2·a·s) = √(2·2·25) = √100 = 10 m/s."},
+ {q:"Il grafico velocità–tempo di un MRUA è:",opts:["una retta inclinata","un'orizzontale","una parabola","una curva qualsiasi"],ans:0,exp:"v = v₀ + a·t: retta inclinata (pendenza = a)."},
+ {q:"Il grafico spazio–tempo di un MRUA è:",opts:["una parabola","una retta","un'orizzontale","una scala a gradini"],ans:0,exp:"Per il termine ½at² la posizione descrive una parabola."},
+ {q:"Nel grafico v–t, la pendenza della retta rappresenta:",opts:["l'accelerazione","la velocità","lo spazio","il tempo"],ans:0,exp:"Pendenza del grafico v–t = accelerazione."},
+ {q:"Un moto rallenta (decelera) quando accelerazione e velocità:",opts:["hanno verso opposto","hanno lo stesso verso","sono entrambe nulle","sono uguali"],ans:0,exp:"Decelerazione: a opposta a v."},
+ {q:"Con v₀ = 8 m/s e a = 2 m/s², dopo 6 s la velocità è:",opts:["20 m/s","16 m/s","10 m/s","26 m/s"],ans:0,exp:"v = 8 + 2·6 = 20 m/s."},
+ {q:"Un'auto a 30 m/s frena con a = 5 m/s². Si ferma in:",opts:["6 s","150 s","0,17 s","25 s"],ans:0,exp:"t = v₀/a = 30/5 = 6 s."},
+ {q:"Un'auto a 20 m/s frena con a = 4 m/s². Lo spazio di frenata è:",opts:["50 m","5 m","80 m","100 m"],ans:0,exp:"s = v₀²/(2a) = 400/8 = 50 m."},
+ {q:"Da fermo con a = 2,5 m/s², dopo 10 s la velocità è:",opts:["25 m/s","0,25 m/s","12,5 m/s","250 m/s"],ans:0,exp:"v = 2,5·10 = 25 m/s."},
+ {q:"Da fermo con a = 4 m/s², in 3 s si percorrono:",opts:["18 m","12 m","36 m","6 m"],ans:0,exp:"s = ½·4·9 = 18 m."},
+ {q:"L'unità di misura dell'accelerazione nel SI è:",opts:["m/s²","m/s","m·s","N"],ans:0,exp:"Velocità (m/s) diviso tempo (s): m/s²."},
+ {q:"La relazione v² = v₀² + 2aΔs è nota come equazione di:",opts:["Torricelli","Varignon","Hooke","Archimede"],ans:0,exp:"È l'equazione di Torricelli, utile senza il tempo."},
+ {q:"Nel MRUA la velocità media vale:",opts:["(v₀ + v)/2","v₀ · v","(v₀ − v)/2","v / t"],ans:0,exp:"Variando v linearmente, la media è (v₀+v)/2."},
+ {q:"Un'auto passa da 0 a 108 km/h (30 m/s) in 6 s. L'accelerazione è:",opts:["5 m/s²","18 m/s²","0,2 m/s²","180 m/s²"],ans:0,exp:"a = 30/6 = 5 m/s²."},
+ {q:"Un moto accelera quando accelerazione e velocità:",opts:["hanno lo stesso verso","hanno verso opposto","a è nulla","v è costante"],ans:0,exp:"Verso concorde ⇒ la velocità cresce in modulo."},
+ {q:"Partendo da fermo (legge dei numeri dispari), nel 2° secondo si percorre, rispetto al 1°:",opts:["il triplo","lo stesso spazio","il doppio","la metà"],ans:0,exp:"Gli spazi stanno come 1 : 3 : 5 …"},
+ {q:"Con v₀ = 10 m/s e a = 2 m/s², dopo 5 s la velocità è:",opts:["20 m/s","12 m/s","100 m/s","10 m/s"],ans:0,exp:"v = 10 + 2·5 = 20 m/s."},
+ {q:"Con v₀ = 5 m/s, a = 2 m/s², in 4 s si percorrono:",opts:["36 m","20 m","16 m","52 m"],ans:0,exp:"s = v₀t + ½at² = 20 + 16 = 36 m."}
+],
+caduta:[
+ {q:"L'accelerazione di gravità g si misura in:",opts:["m/s²","m/s","N","m"],ans:0,exp:"È un'accelerazione: m/s²."},
+ {q:"Nel vuoto, due corpi di massa diversa lasciati cadere dalla stessa quota:",opts:["arrivano insieme","prima il più pesante","prima il più leggero","dipende dalla forma"],ans:0,exp:"Stessa accelerazione g: arrivano insieme (Galileo)."},
+ {q:"Lasciato cadere da fermo, dopo 2 s un corpo ha velocità (g = 9,81):",opts:["19,6 m/s","9,81 m/s","4,9 m/s","2 m/s"],ans:0,exp:"v = g·t = 9,81·2 ≈ 19,6 m/s."},
+ {q:"Il tempo di caduta da un'altezza h (da fermo) è:",opts:["√(2h/g)","2h/g","h/g","√(h·g)"],ans:0,exp:"Da h = ½g t² ⇒ t = √(2h/g)."},
+ {q:"Nel punto più alto di un lancio verso l'alto il corpo ha:",opts:["velocità nulla e accelerazione g verso il basso","tutto nullo","velocità massima","accelerazione nulla"],ans:0,exp:"v = 0 un istante, ma a = g sempre verso il basso."},
+ {q:"In un lancio verticale, il tempo di salita rispetto a quello di discesa è:",opts:["uguale","maggiore","minore","dipende dalla massa"],ans:0,exp:"Il moto è simmetrico."},
+ {q:"Una palla è lanciata verso l'alto a 30 m/s. L'altezza massima è (g ≈ 9,81):",opts:["45,9 m","30 m","60 m","15 m"],ans:0,exp:"h_max = v₀²/(2g) = 900/19,62 ≈ 45,9 m."},
+ {q:"Durante la caduta libera, l'accelerazione del corpo:",opts:["resta costante e pari a g","aumenta","diminuisce","è nulla"],ans:0,exp:"g è costante; è la velocità che cresce."},
+ {q:"Un sasso cade da fermo da 45 m. Il tempo di caduta è circa (g ≈ 9,81):",opts:["3 s","1,5 s","9 s","4,5 s"],ans:0,exp:"t = √(2·45/9,81) ≈ 3,0 s."},
+ {q:"Lasciato cadere da fermo, dopo 3 s un corpo ha velocità (g = 9,81):",opts:["29,4 m/s","9,81 m/s","3 m/s","44 m/s"],ans:0,exp:"v = 9,81·3 ≈ 29,4 m/s."},
+ {q:"Un corpo cade da fermo da 20 m. La velocità d'impatto è (g = 9,81):",opts:["19,8 m/s","20 m/s","10 m/s","392 m/s"],ans:0,exp:"v = √(2·9,81·20) ≈ 19,8 m/s."},
+ {q:"Lasciato cadere da fermo, in 1 s un corpo scende di circa (g = 9,81):",opts:["4,9 m","9,81 m","1 m","2 m"],ans:0,exp:"h = ½·9,81·1² ≈ 4,9 m."},
+ {q:"Lanciato verso l'alto a 20 m/s, il tempo di salita è (g = 9,81):",opts:["2,04 s","4,08 s","1 s","20 s"],ans:0,exp:"t = v₀/g = 20/9,81 ≈ 2,04 s."},
+ {q:"L'altezza massima di un lancio verticale verso l'alto è:",opts:["v₀²/(2g)","v₀/g","2v₀/g","v₀²/g"],ans:0,exp:"h_max = v₀²/(2g)."},
+ {q:"Il tempo di volo per tornare al punto di lancio (verso l'alto) è:",opts:["2v₀/g","v₀/g","v₀²/(2g)","√(2h/g)"],ans:0,exp:"t_volo = 2v₀/g (doppio del tempo di salita)."},
+ {q:"Nel punto più alto di un lancio verticale, l'accelerazione è:",opts:["g verso il basso","nulla","g verso l'alto","massima"],ans:0,exp:"La gravità agisce sempre verso il basso."},
+ {q:"Nel vuoto, una piuma e un sasso lasciati cadere:",opts:["hanno la stessa accelerazione","il sasso è più veloce","la piuma è più veloce","restano fermi"],ans:0,exp:"Senza aria, entrambi con accelerazione g."},
+ {q:"Un corpo cade da fermo da 80 m. Il tempo di caduta è (g = 9,81):",opts:["4,04 s","8 s","2 s","16 s"],ans:0,exp:"t = √(2·80/9,81) ≈ 4,04 s."},
+ {q:"Un sasso è lanciato verso il basso a 5 m/s. Dopo 2 s la sua velocità è (g = 9,81):",opts:["24,6 m/s","19,6 m/s","5 m/s","14,8 m/s"],ans:0,exp:"v = 5 + 9,81·2 ≈ 24,6 m/s."},
+ {q:"La velocità d'impatto cadendo da fermo da 5 m è (g = 9,81):",opts:["9,9 m/s","5 m/s","49 m/s","3,1 m/s"],ans:0,exp:"v = √(2·9,81·5) ≈ 9,9 m/s."}
+],
+parab:[
+ {q:"Il moto parabolico è la composizione di:",opts:["un MRU orizzontale e una caduta verticale","due moti uniformi","due moti accelerati","un moto circolare e uno rettilineo"],ans:0,exp:"Orizzontale uniforme + verticale accelerato."},
+ {q:"Nel moto parabolico la componente orizzontale della velocità:",opts:["resta costante","aumenta","diminuisce","si annulla in cima"],ans:0,exp:"In orizzontale non agisce accelerazione."},
+ {q:"Nel punto più alto della traiettoria, la componente verticale della velocità è:",opts:["nulla","massima","uguale a v₀","uguale a v_x"],ans:0,exp:"v_y = 0 nel punto più alto."},
+ {q:"Un corpo lanciato orizzontalmente e uno lasciato cadere dalla stessa quota:",opts:["toccano terra insieme","prima il lanciato","prima quello lasciato cadere","dipende da v₀"],ans:0,exp:"Il moto verticale è identico e indipendente."},
+ {q:"La gittata di un lancio obliquo è massima per un angolo di:",opts:["45°","30°","60°","90°"],ans:0,exp:"sin(2θ) è massimo per 2θ = 90°, cioè θ = 45°."},
+ {q:"Danno la stessa gittata, per esempio, gli angoli:",opts:["30° e 60°","20° e 30°","45° e 90°","10° e 20°"],ans:0,exp:"Angoli complementari (somma 90°)."},
+ {q:"La formula della gittata (dal suolo) è:",opts:["v₀²·sin(2θ)/g","v₀·t","v₀²/(2g)","½ g t²"],ans:0,exp:"R = v₀²·sin(2θ)/g."},
+ {q:"Un proiettile lanciato dal suolo con θ = 90° ha gittata:",opts:["nulla","massima","40 m","20 m"],ans:0,exp:"sin(180°) = 0: ricade nel punto di lancio."},
+ {q:"Trascurando l'aria, la traiettoria di un proiettile è:",opts:["una parabola","una retta","una circonferenza","un'iperbole"],ans:0,exp:"Composizione di moto uniforme e accelerato."},
+ {q:"In un lancio orizzontale da altezza h, il tempo di volo dipende:",opts:["solo dall'altezza h","solo da v₀","da entrambe","dalla massa"],ans:0,exp:"t = √(2h/g): solo da h."},
+ {q:"Un pallone è calciato a 20 m/s con θ = 30°. La gittata è circa (g ≈ 9,81):",opts:["35,3 m","40 m","17 m","71 m"],ans:0,exp:"R = 400·sin60°/9,81 ≈ 35,3 m."},
+ {q:"Con v₀ = 25 m/s e θ = 37° (cos ≈ 0,80), la componente orizzontale è:",opts:["20 m/s","15 m/s","25 m/s","12,5 m/s"],ans:0,exp:"v₀ₓ = 25·0,80 = 20 m/s."},
+ {q:"Con v₀ = 25 m/s e θ = 37° (sin ≈ 0,60), la componente verticale è:",opts:["15 m/s","20 m/s","25 m/s","10 m/s"],ans:0,exp:"v₀ᵧ = 25·0,60 = 15 m/s."},
+ {q:"Nel punto più alto, la velocità del proiettile è:",opts:["solo orizzontale (v_x)","nulla","solo verticale","massima"],ans:0,exp:"v_y = 0; resta v_x."},
+ {q:"Con v₀ = 30 m/s, la gittata massima (θ = 45°) vale (g ≈ 9,81):",opts:["91,7 m","45 m","900 m","30 m"],ans:0,exp:"R_max = v₀²/g = 900/9,81 ≈ 91,7 m."},
+ {q:"L'altezza massima di un lancio obliquo è:",opts:["v₀²·sin²θ/(2g)","v₀²·sin(2θ)/g","v₀·sinθ/g","½ g t²"],ans:0,exp:"h_max = v₀²·sin²θ/(2g)."},
+ {q:"Una biglia lanciata orizzontalmente da 1,25 m cade dopo (g ≈ 9,81):",opts:["0,5 s","1,25 s","2,5 s","0,25 s"],ans:0,exp:"t = √(2·1,25/9,81) ≈ 0,5 s."},
+ {q:"Il tempo di volo di un lancio obliquo (dal suolo) è:",opts:["2v₀·sinθ/g","v₀·cosθ/g","√(2h/g)","v₀²/g"],ans:0,exp:"t = 2v₀sinθ/g."},
+ {q:"Nel moto parabolico, la componente orizzontale dell'accelerazione è:",opts:["nulla","g","crescente","v₀·cosθ"],ans:0,exp:"L'unica accelerazione è g, verticale."},
+ {q:"Un aereo a 80 m sgancia un pacco che cade a 120 m in orizzontale. La velocità dell'aereo era (g ≈ 9,81):",opts:["29,7 m/s","120 m/s","80 m/s","15 m/s"],ans:0,exp:"t = √(2·80/9,81) ≈ 4,04 s; v₀ = 120/4,04 ≈ 29,7 m/s."}
+]
+};
 /* ==================== MOTORE QUIZ ==================== */
 const QSECTIONS=['mru','mrua','caduta','parab','riepilogo'];
+const TOPIC_KEYS=QSECTIONS.filter(k=>k!=='riepilogo');
 const QUIZ_ENDONLY={riepilogo:true};   /* correzione mostrata solo alla fine (solo il riepilogativo) */
+const QUIZ_DRAW={riepilogo:18};        /* domande estratte; i pool valgono 3× */
+const QUIZ_DRAW_DEFAULT=10;
 const qState={};
-QSECTIONS.forEach(s=>{ qState[s]={idx:0,score:0,answered:false,done:false,answers:[]}; });
-function quizScore(s){ const qs=QUIZZES[s], st=qState[s]; let n=0; qs.forEach((q,i)=>{ if(st.answers[i]===q.ans) n++; }); return n; }
+function poolFor(s){ return s==='riepilogo' ? [].concat(...TOPIC_KEYS.map(k=>poolFor(k)), QUIZZES.riepilogo||[]) : (QUIZZES[s]||[]).concat(QUIZZES_EXTRA[s]||[]); }
+function shuffle(n){ const a=[...Array(n).keys()]; for(let i=n-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function drawCount(s){ const pool=poolFor(s).length; return Math.max(1, Math.min(pool, QUIZ_DRAW[s]||QUIZ_DRAW_DEFAULT)); }
+function freshQuiz(s){ const pool=poolFor(s), ord=shuffle(pool.length).slice(0,drawCount(s)); return {idx:0,done:false,answers:[],order:ord,opt:ord.map(qi=>shuffle(pool[qi].opts.length))}; }
+QSECTIONS.forEach(s=>{ qState[s]=freshQuiz(s); });
+function quizScore(s){ const qs=poolFor(s), st=qState[s]; let n=0; st.order.forEach((qi,pos)=>{ if(st.answers[pos]===qs[qi].ans) n++; }); return n; }
 function renderQuiz(s){
-  const st=qState[s], qs=QUIZZES[s], el=document.getElementById('qz-'+s);
-  if(!el||!qs) return;
-  const total=qs.length, endOnly=!!QUIZ_ENDONLY[s]; let body;
+  const st=qState[s], qs=poolFor(s), el=document.getElementById('qz-'+s);
+  if(!el||!qs.length) return;
+  const order=st.order, total=order.length, endOnly=!!QUIZ_ENDONLY[s]; let body;
   const msgs=['Da rivedere — rileggi la teoria e riprova.','Sufficiente — qualche lacuna da colmare.','Buono — ancora un piccolo sforzo!','Ottimo risultato!','Perfetto — nessun errore!'];
   if(st.done){
     const score=quizScore(s), r=score/total, mi=r<=0.3?0:r<=0.5?1:r<=0.8?2:r<=0.94?3:4;
     let review='';
     if(endOnly){
-      review='<div class="quiz-review">'+qs.map((q,i)=>{ const ch=st.answers[i], ok=ch===q.ans;
+      review='<div class="quiz-review">'+order.map((qi,pos)=>{ const q=qs[qi], omap=st.opt[pos], ch=st.answers[pos], ok=ch===q.ans, chD=ch==null?-1:omap.indexOf(ch), ansD=omap.indexOf(q.ans);
         return `<div class="qr-item ${ok?'ok':'no'}">
-          <div class="qr-q">${i+1}. ${q.q}</div>
-          <div class="qr-a">${ok?IC.check:IC.cross}<span>La tua risposta: <b>${ch==null?'nessuna':(('ABCD'[ch])+') '+q.opts[ch])}</b></span></div>
-          ${ok?'':`<div class="qr-correct">${IC.check}<span>Corretta: <b>${'ABCD'[q.ans]}) ${q.opts[q.ans]}</b></span></div>`}
+          <div class="qr-q">${pos+1}. ${q.q}</div>
+          <div class="qr-a">${ok?IC.check:IC.cross}<span>La tua risposta: <b>${ch==null?'nessuna':(('ABCD'[chD])+') '+q.opts[ch])}</b></span></div>
+          ${ok?'':`<div class="qr-correct">${IC.check}<span>Corretta: <b>${'ABCD'[ansD]}) ${q.opts[q.ans]}</b></span></div>`}
           <div class="qr-exp">${q.exp}</div>
         </div>`; }).join('')+'</div>';
     }
@@ -1819,13 +1917,13 @@ function renderQuiz(s){
       <button class="quiz-restart" onclick="restartQuiz('${s}')">${IC.reset}<span>Ricomincia quiz</span></button>
     </div>${review}`;
   } else {
-    const q=qs[st.idx], pct=st.idx/total*100, given=st.answers[st.idx], answered=given!=null, correct=answered&&given===q.ans;
-    const opts=q.opts.map((o,i)=>{
+    const q=qs[order[st.idx]], omap=st.opt[st.idx], pct=st.idx/total*100, given=st.answers[st.idx], answered=given!=null, correct=answered&&given===q.ans;
+    const opts=omap.map((oi,disp)=>{
       let cls='quiz-btn';
-      if(answered){ if(endOnly){ if(i===given) cls+=' chosen'; }
-        else { if(i===q.ans) cls+=' correct'; else if(i===given) cls+=' wrong'; } }
+      if(answered){ if(endOnly){ if(oi===given) cls+=' chosen'; }
+        else { if(oi===q.ans) cls+=' correct'; else if(oi===given) cls+=' wrong'; } }
       const dis=(answered && !endOnly)?' disabled':'';
-      return `<button class="${cls}"${dis} onclick="answerQuiz('${s}',${i})">${'ABCD'[i]}) ${o}</button>`;
+      return `<button class="${cls}"${dis} onclick="answerQuiz('${s}',${oi})">${'ABCD'[disp]}) ${q.opts[oi]}</button>`;
     }).join('');
     const counter=endOnly?`Risposte: ${st.answers.filter(a=>a!=null).length}/${total}`:`Punteggio: ${quizScore(s)}`;
     const note=endOnly
@@ -1853,12 +1951,12 @@ function answerQuiz(s,chosen){
   renderQuiz(s);
 }
 function nextQuiz(s){
-  const st=qState[s], tot=QUIZZES[s].length;
+  const st=qState[s], tot=st.order.length;
   if(st.idx<tot-1){ st.idx++; } else { st.done=true; markDone(s); }
   renderQuiz(s);
 }
 function prevQuiz(s){ const st=qState[s]; if(st.idx>0){ st.idx--; renderQuiz(s); } }
-function restartQuiz(s){ qState[s]={idx:0,score:0,answered:false,done:false,answers:[]}; renderQuiz(s); }
+function restartQuiz(s){ qState[s]=freshQuiz(s); renderQuiz(s); }
 
 /* ==================== INIZIALIZZAZIONE ==================== */
 bindRange('mruS0','mruS0v',v=>fmtTick(v)+' m');
