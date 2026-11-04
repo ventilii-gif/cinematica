@@ -1795,9 +1795,7 @@ const QSECTIONS=['mru','mrua','caduta','parab','riepilogo'];
 const QUIZ_ENDONLY={riepilogo:true};   /* correzione mostrata solo alla fine (solo il riepilogativo) */
 const qState={};
 QSECTIONS.forEach(s=>{ qState[s]={idx:0,score:0,answered:false,done:false,answers:[]}; });
-function quizScore(s){ const qs=QUIZZES[s], st=qState[s];
-  if(QUIZ_ENDONLY[s]){ let n=0; qs.forEach((q,i)=>{ if(st.answers[i]===q.ans) n++; }); return n; }
-  return st.score; }
+function quizScore(s){ const qs=QUIZZES[s], st=qState[s]; let n=0; qs.forEach((q,i)=>{ if(st.answers[i]===q.ans) n++; }); return n; }
 function renderQuiz(s){
   const st=qState[s], qs=QUIZZES[s], el=document.getElementById('qz-'+s);
   if(!el||!qs) return;
@@ -1820,57 +1818,46 @@ function renderQuiz(s){
       <p class="quiz-msg">${msgs[mi]}</p>
       <button class="quiz-restart" onclick="restartQuiz('${s}')">${IC.reset}<span>Ricomincia quiz</span></button>
     </div>${review}`;
-  } else if(endOnly){
-    const q=qs[st.idx], pct=st.idx/total*100, chosen=st.answers[st.idx], nAns=st.answers.filter(a=>a!=null).length;
-    body=`<div class="quiz-hd">
-        <span style="color:var(--text-soft)">Domanda ${st.idx+1} / ${total}</span>
-        <span style="font-weight:700;color:var(--accent-d)">Risposte: ${nAns}/${total}</span>
-      </div>
-      <div class="quiz-bar-wrap"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
-      <p class="quiz-note-end">Le correzioni compaiono alla fine del quiz.</p>
-      <p class="quiz-q">${q.q}</p>
-      <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-btn${chosen===i?' chosen':''}" onclick="answerQuiz('${s}',${i})">${'ABCD'[i]}) ${o}</button>`).join('')}</div>
-      <div class="quiz-nav-row">
-        ${st.idx>0?`<button class="quiz-prev" onclick="prevQuiz('${s}')">← Precedente</button>`:'<span></span>'}
-        <button class="quiz-next" ${chosen==null?'disabled':''} onclick="nextQuiz('${s}')">${st.idx+1<total?'Prossima domanda →':'Vedi il risultato finale →'}</button>
-      </div>`;
   } else {
-    const q=qs[st.idx], pct=st.idx/total*100;
+    const q=qs[st.idx], pct=st.idx/total*100, given=st.answers[st.idx], answered=given!=null, correct=answered&&given===q.ans;
+    const opts=q.opts.map((o,i)=>{
+      let cls='quiz-btn';
+      if(answered){ if(endOnly){ if(i===given) cls+=' chosen'; }
+        else { if(i===q.ans) cls+=' correct'; else if(i===given) cls+=' wrong'; } }
+      const dis=(answered && !endOnly)?' disabled':'';
+      return `<button class="${cls}"${dis} onclick="answerQuiz('${s}',${i})">${'ABCD'[i]}) ${o}</button>`;
+    }).join('');
+    const counter=endOnly?`Risposte: ${st.answers.filter(a=>a!=null).length}/${total}`:`Punteggio: ${quizScore(s)}`;
+    const note=endOnly
+      ? `<p class="quiz-note-end">Le correzioni compaiono alla fine. Puoi tornare indietro con «Precedente»: le risposte restano quelle che hai dato.</p>`
+      : (answered?`<div class="quiz-exp ${correct?'ok':'no'}"><strong>${correct?IC.check+'Corretto!':IC.cross+'Sbagliato.'}</strong> ${q.exp}</div>`:'');
+    const prevBtn=st.idx>0?`<button class="quiz-prev" onclick="prevQuiz('${s}')">← Precedente</button>`:'<span></span>';
+    const nextBtn=answered?`<button class="quiz-next" onclick="nextQuiz('${s}')">${st.idx+1<total?'Prossima domanda →':'Vedi il risultato finale →'}</button>`:'<span></span>';
     body=`<div class="quiz-hd">
         <span style="color:var(--text-soft)">Domanda ${st.idx+1} / ${total}</span>
-        <span style="font-weight:700;color:var(--accent-d)">Punteggio: ${st.score}</span>
+        <span style="font-weight:700;color:var(--accent-d)">${counter}</span>
       </div>
       <div class="quiz-bar-wrap"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
+      ${endOnly?note:''}
       <p class="quiz-q">${q.q}</p>
-      <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-btn" id="qb-${s}-${i}" onclick="answerQuiz('${s}',${i})">${'ABCD'[i]}) ${o}</button>`).join('')}</div>
-      <div class="quiz-exp" id="qexp-${s}" style="display:none"></div>
-      <button class="quiz-next" id="qnxt-${s}" style="display:none" onclick="nextQuiz('${s}')">${st.idx+1<total?'Prossima domanda →':'Vedi il risultato finale →'}</button>`;
+      <div class="quiz-opts">${opts}</div>
+      ${endOnly?'':note}
+      <div class="quiz-nav-row">${prevBtn}${nextBtn}</div>`;
   }
   el.innerHTML=`<div class="card"><h2>Quiz</h2>${body}</div>`;
 }
 function answerQuiz(s,chosen){
   const st=qState[s];
-  if(QUIZ_ENDONLY[s]){ st.answers[st.idx]=chosen; renderQuiz(s); return; }
-  if(st.answered) return; st.answered=true;
-  const q=QUIZZES[s][st.idx], correct=chosen===q.ans;
-  if(correct) st.score++;
-  for(let i=0;i<q.opts.length;i++){
-    const b=document.getElementById(`qb-${s}-${i}`); if(!b) continue;
-    b.disabled=true;
-    if(i===q.ans) b.classList.add('correct');
-    else if(i===chosen) b.classList.add('wrong');
-  }
-  const exp=document.getElementById(`qexp-${s}`);
-  exp.style.display=''; exp.className=`quiz-exp ${correct?'ok':'no'}`;
-  exp.innerHTML=`<strong>${correct?IC.check+'Corretto!':IC.cross+'Sbagliato.'}</strong> ${q.exp}`;
-  document.getElementById(`qnxt-${s}`).style.display='';
-}
-function nextQuiz(s){
-  const st=qState[s]; st.idx++; st.answered=false;
-  if(st.idx>=QUIZZES[s].length){ st.done=true; markDone(s); }
+  if(!QUIZ_ENDONLY[s] && st.answers[st.idx]!=null) return;   /* quiz per argomento: risposta non modificabile */
+  st.answers[st.idx]=chosen;
   renderQuiz(s);
 }
-function prevQuiz(s){ const st=qState[s]; if(st.idx>0){ st.idx--; st.answered=false; renderQuiz(s); } }
+function nextQuiz(s){
+  const st=qState[s], tot=QUIZZES[s].length;
+  if(st.idx<tot-1){ st.idx++; } else { st.done=true; markDone(s); }
+  renderQuiz(s);
+}
+function prevQuiz(s){ const st=qState[s]; if(st.idx>0){ st.idx--; renderQuiz(s); } }
 function restartQuiz(s){ qState[s]={idx:0,score:0,answered:false,done:false,answers:[]}; renderQuiz(s); }
 
 /* ==================== INIZIALIZZAZIONE ==================== */
